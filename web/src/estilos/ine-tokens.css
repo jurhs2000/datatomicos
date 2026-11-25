@@ -1,0 +1,123 @@
+/* ==========================================================================
+   INE Guatemala — tokens de diseño (CSS)
+   Fuente: Kit de diseño Datatón INE 2026 (Manual de Imagen Institucional 2025),
+   compartido por el INE con los participantes del Datatón (25/11/2026).
+   Los valores marcados [inferido] NO vienen del manual; son criterio derivado.
+   ========================================================================== */
+
+/* --- Tipografía: Ubuntu Sans ------------------------------------------------
+   Opción A (web pública): Google Fonts
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+     <link href="https://fonts.googleapis.com/css2?family=Ubuntu+Sans:ital,wdth,wght@0,75..100,100..800;1,75..100,100..800&display=swap" rel="stylesheet">
+   En este sitio se usa la opción A (ver index.html).                          */
+
+:root {
+  /* --- Tonos principales [oficial, p. 30] — deben predominar --- */
+  --ine-azul-radiante: #0080FF;   /* Pantone 3005 C */
+  --ine-azul-oscuro:   #004080;   /* Pantone 302 C  */
+  --ine-blanco:        #FFFFFF;
+
+  /* --- Tonos secundarios [oficial, p. 31] — segundo plano --- */
+  --ine-naranja:          #FF5500; /* Pantone 172 C */
+  --ine-naranja-oscuro:   #802B00; /* Pantone 174 C */
+  --ine-naranja-claro:    #FFDDCC; /* Pantone 162 C */
+  --ine-gris:             #999999; /* Pantone 7544 C */
+  --ine-gris-oscuro:      #4D4D4D; /* Pantone 7540 C */
+  --ine-gris-claro:       #D9D9D9; /* Pantone 428 C */
+  --ine-verde:            #9DD926; /* Pantone 376 C */
+  --ine-verde-oscuro:     #4D6B13; /* Pantone 364 C */
+  --ine-verde-claro:      #CEEC93; /* Pantone 366 C */
+  --ine-lila:             #A97EFF; /* Pantone 2577 C */
+  --ine-lila-oscuro:      #6633CC; /* Pantone 266 C */
+  --ine-lila-claro:       #DCCBFF; /* Pantone 264 C */
+  --ine-amarillo:         #FFD500; /* Pantone 123 C */
+  /* Dorado: exclusivo del Despacho Superior — NO usar. */
+
+  /* --- Roles semánticos [inferido] --- */
+  --ine-fondo:            var(--ine-blanco);
+  --ine-fondo-alterno:    var(--ine-gris-claro);
+  --ine-fondo-marca:      var(--ine-azul-oscuro);
+  --ine-texto:            #333333;              /* usado en la portada de la guía */
+  --ine-texto-secundario: var(--ine-gris-oscuro);
+  --ine-texto-invertido:  var(--ine-blanco);
+  --ine-titulo:           var(--ine-azul-oscuro);
+  --ine-titulo-acento:    var(--ine-azul-radiante); /* solo tamaños grandes: 3.8:1 sobre blanco */
+  --ine-enlace:           var(--ine-azul-oscuro);
+  --ine-acento:           var(--ine-naranja);
+  --ine-borde:            var(--ine-gris-claro);
+
+  /* --- Gráficas de datos (validado, ver references/graficas-datos.md) --- */
+  --ine-serie-1: #0080FF;
+  --ine-serie-2: #FF5500;
+  --ine-serie-3: #6633CC;
+  --ine-serie-4: #4D6B13;
+  --ine-serie-otros: #999999;
+  --ine-seq-1: #66B3FF;  /* [inferido] */
+  --ine-seq-2: #0080FF;
+  --ine-seq-3: #0060BF;  /* [inferido] */
+  --ine-seq-4: #004080;
+  --ine-div-neg-2: #802B00;
+  --ine-div-neg-1: #FF5500;
+  --ine-div-centro: #D9D9D9;
+  --ine-div-pos-1: #0080FF;
+  --ine-div-pos-2: #004080;
+
+  /* --- Tipografía --- */
+  --ine-fuente: "Ubuntu Sans", "Segoe UI", system-ui, sans-serif;
+  --ine-peso-light: 300;
+  --ine-peso-regular: 400;
+  --ine-peso-medium: 500;
+  --ine-peso-semibold: 600;
+  --ine-peso-bold: 700;
+  --ine-peso-extrabold: 800;
+  /* Escala [inferido] */
+  --ine-texto-xs: 0.75rem;
+  --ine-texto-sm: 0.875rem;
+  --ine-texto-md: 1rem;
+  --ine-texto-lg: 1.25rem;
+  --ine-texto-xl: 1.75rem;
+  --ine-texto-2xl: 2.5rem;
+  --ine-texto-3xl: 3.5rem;
+  --ine-interlineado-titulo: 1.1;
+  --ine-interlineado-texto: 1.5;
+
+  /* --- Forma: esquina superior izquierda curva (firma visual) [inferido de pp. 17-35] --- */
+  --ine-radio-firma: 2.5rem;     /* bloques grandes */
+  --ine-radio-firma-sm: 1rem;    /* tarjetas y botones */
+  --ine-radio-tribarra: 999px;
+
+  /* --- Espaciado [inferido] --- */
+  --ine-espacio-1: 0.25rem;
+  --ine-espacio-2: 0.5rem;
+  --ine-espacio-3: 1rem;
+  --ine-espacio-4: 1.5rem;
+  --ine-espacio-5: 2rem;
+  --ine-espacio-6: 3rem;
+  --ine-espacio-7: 4rem;
+}
+
+/* --- Utilidades de lenguaje visual [inferido] --- */
+.ine-esquina    { border-radius: var(--ine-radio-firma) 0 0 0; }
+.ine-esquina-sm { border-radius: var(--ine-radio-firma-sm) 0 0 0; }
+
+/* Tri-barra (azul radiante · azul oscuro · naranja), como en la plantilla */
+.ine-tribarra { display: flex; gap: 0.4em; }
+.ine-tribarra > span { display: block; width: 4.5em; height: 0.3em; border-radius: var(--ine-radio-tribarra); }
+.ine-tribarra > span:nth-child(1) { background: var(--ine-azul-radiante); }
+.ine-tribarra > span:nth-child(2) { background: var(--ine-azul-oscuro); }
+.ine-tribarra > span:nth-child(3) { background: var(--ine-naranja); }
+
+/* Base tipográfica */
+.ine-base {
+  font-family: var(--ine-fuente);
+  color: var(--ine-texto);
+  background: var(--ine-fondo);
+  line-height: var(--ine-interlineado-texto);
+}
+.ine-base h1, .ine-base h2, .ine-base h3 {
+  color: var(--ine-titulo);
+  line-height: var(--ine-interlineado-titulo);
+  font-weight: var(--ine-peso-bold);
+}
+.ine-base .ine-num { font-variant-numeric: tabular-nums; }

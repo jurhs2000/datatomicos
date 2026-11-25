@@ -14,7 +14,8 @@ Herramienta del equipo Datatómicos para el Datatón INE 2026 (categoría Tecnol
 | `pipeline/` | Descarga y normalización de datos del portal |
 | `modelos/ipc/` | Proyección del IPC y coeficientes departamentales (notebook, insumos y script de preparación) |
 | `datos/` | Archivos locales; `datos/crudos/` no se versiona y se regenera con scripts |
-| `web/` | Sitio estático |
+| `web/` | Sitio estático (Vite, React, TypeScript, MapLibre, Observable Plot); ver `web/README.md` |
+| `environment.yml` | Entorno de Python del proyecto (`series-tiempo-geo`) |
 | `docs/` | `arquitectura.md` y registro de decisiones en `docs/decisiones/` |
 
 Antes de cambiar la estructura o tomar una decisión de diseño, revisar `docs/decisiones/`. Una decisión nueva se registra con el siguiente número.
@@ -30,6 +31,7 @@ Antes de cambiar la estructura o tomar una decisión de diseño, revisar `docs/d
 - Usar como fuente principal los datos publicados en el portal del INE (`www.ine.gob.gt`, `datos.ine.gob.gt`). Toda fuente nueva se registra en el README con su enlace, licencia y fecha de descarga.
 - Citar al INE como fuente en la herramienta y en la documentación.
 - Respetar las definiciones y metadatos oficiales; no presentar resultados de forma que induzcan a error.
+- `web/public/datos/` es generado: se regenera con `pipeline/` y con la última celda del notebook del IPC, nunca se edita a mano. Ningún dato se escribe dentro del código del sitio.
 - Respetar el secreto estadístico: nada que intente identificar personas, hogares o empresas.
 - No incluir credenciales, contraseñas ni llaves de acceso en el código.
 

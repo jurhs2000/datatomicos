@@ -1,5 +1,53 @@
 # Sitio web
 
-Interfaz del proyecto: el explorador por tiempo y territorio y la sección del IPC con proyección. Es un sitio estático que lee los archivos generados por el pipeline y los modelos.
+Interfaz del proyecto: el explorador por tiempo y territorio y la sección del IPC. Es un sitio estático, sin servidor, que lee los archivos de `public/datos/`.
 
-*Pendiente:* tecnologías, instalación y estructura.
+## Tecnologías
+
+| Componente | Uso | Licencia |
+|---|---|---|
+| [Vite](https://vite.dev) | Servidor de desarrollo y compilación | MIT |
+| [React](https://react.dev) y TypeScript | Interfaz | MIT / Apache-2.0 |
+| [MapLibre GL JS](https://maplibre.org) | Mapa de departamentos, sin mapa base ni servicios de teselas | BSD-3-Clause |
+| [Observable Plot](https://observablehq.com/plot) | Gráficas del IPC | ISC |
+
+La identidad visual usa los tokens del kit de diseño del Datatón INE 2026 (`src/estilos/ine-tokens.css`) y la tipografía Ubuntu Sans desde Google Fonts.
+
+## Cómo correrlo
+
+Requiere Node.js 20 o superior. Desde esta carpeta:
+
+```bash
+npm install
+npm run dev       # servidor local en http://localhost:5173
+npm run build     # verifica tipos y genera dist/
+npm run preview   # sirve dist/ para revisarlo antes de publicar
+```
+
+## Estructura
+
+```
+public/datos/            generado; no se edita a mano
+  catalogo.json          ← pipeline/construir_catalogo.py
+  territorio/            ← pipeline (departamentos.json; límites en GeoJSON pendientes)
+  ipc/                   ← celda final de modelos/ipc/sarimax_coeficientes_departamentales.ipynb
+src/
+  App.tsx                encabezado, navegación y pie
+  navegacion.ts          rutas por hash (#/explorador, #/ipc)
+  datos.ts               tipos de los archivos de datos y carga
+  vistas/                Inicio, Explorador, Ipc
+  componentes/           LineaDeTiempo, Mapa, Grafica y lectura de colores
+  estilos/               tokens del INE y estilos del sitio
+```
+
+## Reglas
+
+- **Ningún dato va escrito en el código.** Todo sale de `public/datos/`; si falta algo, se agrega en el pipeline o en el catálogo.
+- **Lo estimado se marca.** Toda cifra calculada por el equipo lleva la etiqueta de estimación y su fuente.
+- **Los colores salen de los tokens** (`var(--ine-…)` en CSS y `colorToken()` en TypeScript), no de valores escritos a mano.
+- **Una vista nueva** se agrega en `src/vistas/`, se registra en `navegacion.ts` y `App.tsx`, y no toca las demás.
+
+## Pendiente
+
+- Límites de departamentos y municipios en GeoJSON (`public/datos/territorio/departamentos.geojson`). Mientras no estén, el mapa muestra un aviso y la lista de departamentos sigue funcionando.
+- Publicación en GitHub Pages.

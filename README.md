@@ -47,11 +47,36 @@ Principios que guían el diseño:
 
 ### Tecnologías
 
-*Pendiente.*
+| Parte | Tecnologías |
+|---|---|
+| Sitio web (`web/`) | Sitio estático con Vite, React y TypeScript. Mapa con MapLibre GL JS y gráficas con Observable Plot. Sin servidor ni servicios de pago. |
+| Datos (`catalogo/`, `pipeline/`) | Catálogo en CSV y scripts de Python que lo validan y generan los archivos JSON que lee el sitio. |
+| Modelo (`modelos/ipc/`) | Python: statsforecast y statsmodels para el modelo SARIMAX; pandas, NumPy y SciPy para los coeficientes departamentales. |
 
 ## Instalación y uso
 
-*Pendiente.*
+Requisitos: [Miniforge](https://conda-forge.org/download/) (o cualquier distribución de conda) y Node.js 20 o superior.
+
+```bash
+# 1. Entorno de Python
+conda env create -f environment.yml
+conda activate series-tiempo-geo
+
+# 2. Datos: catálogo e insumos del modelo
+python pipeline/construir_catalogo.py
+python modelos/ipc/preparar_insumos.py
+
+# 3. Modelo del IPC: abrir modelos/ipc/sarimax_coeficientes_departamentales.ipynb
+#    (VS Code o Jupyter, con el kernel del entorno) y ejecutar todas las celdas.
+#    La última celda exporta los resultados a web/public/datos/ipc/.
+
+# 4. Sitio web
+cd web
+npm install
+npm run dev
+```
+
+Los archivos que lee el sitio (`web/public/datos/`) ya están en el repositorio, así que para ver el sitio basta con el paso 4.
 
 ## Datos utilizados
 
@@ -91,7 +116,7 @@ El equipo usó agentes de Claude Code (Anthropic) y Codex (OpenAI) como asistent
 
 ## Servicios de pago o en la nube
 
-*Pendiente.*
+El proyecto no usa servicios de pago. El sitio es estático y no necesita servidor; la tipografía se carga desde Google Fonts, que es gratuito.
 
 ## Componentes de terceros
 
@@ -104,8 +129,13 @@ El equipo usó agentes de Claude Code (Anthropic) y Codex (OpenAI) como asistent
 | StatsForecast | Modelos ARIMA y SARIMAX | Apache-2.0 |
 | Matplotlib | Gráficas del análisis | Matplotlib License (basada en PSF) |
 | openpyxl | Lectura de archivos Excel | MIT |
-
-*Se completará con los componentes de la interfaz.*
+| requests, geopandas, pyarrow | Descarga y procesamiento de datos geográficos | Apache-2.0, BSD-3-Clause, Apache-2.0 |
+| React | Interfaz del sitio | MIT |
+| Vite | Compilación del sitio | MIT |
+| TypeScript | Tipos del código del sitio | Apache-2.0 |
+| MapLibre GL JS | Mapa de departamentos | BSD-3-Clause |
+| Observable Plot | Gráficas del IPC | ISC |
+| Ubuntu Sans (Google Fonts) | Tipografía | Ubuntu Font Licence |
 
 ## Equipo
 
