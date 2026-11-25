@@ -221,3 +221,22 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --- Agregado por el equipo Datatómicos ---
+
+# Node y front end
+node_modules/
+dist/
+.vite/
+npm-debug.log*
+
+# Sistema operativo y editores
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Configuración local de Claude Code
+.claude/settings.local.json
+
+# Datos descargados o convertidos localmente (se regeneran con scripts)
+datos/crudos/
