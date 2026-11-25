@@ -1,0 +1,137 @@
+{
+ "anio_precios": 2023,
+ "departamentos": [
+  {
+   "codigo": 1,
+   "nombre": "GUATEMALA",
+   "coeficiente": 1.0439,
+   "observaciones": 84481
+  },
+  {
+   "codigo": 2,
+   "nombre": "EL PROGRESO",
+   "coeficiente": 1.016,
+   "observaciones": 9628
+  },
+  {
+   "codigo": 3,
+   "nombre": "SACATEPEQUEZ",
+   "coeficiente": 1.0169,
+   "observaciones": 14323
+  },
+  {
+   "codigo": 4,
+   "nombre": "CHIMALTENANGO",
+   "coeficiente": 0.969,
+   "observaciones": 8554
+  },
+  {
+   "codigo": 5,
+   "nombre": "ESCUINTLA",
+   "coeficiente": 0.9691,
+   "observaciones": 16118
+  },
+  {
+   "codigo": 6,
+   "nombre": "SANTA ROSA",
+   "coeficiente": 0.9656,
+   "observaciones": 7078
+  },
+  {
+   "codigo": 7,
+   "nombre": "SOLOLA",
+   "coeficiente": 0.9793,
+   "observaciones": 13618
+  },
+  {
+   "codigo": 8,
+   "nombre": "TOTONICAPAN",
+   "coeficiente": 1.014,
+   "observaciones": 20433
+  },
+  {
+   "codigo": 9,
+   "nombre": "QUETZALTENANGO",
+   "coeficiente": 1.0173,
+   "observaciones": 23065
+  },
+  {
+   "codigo": 10,
+   "nombre": "SUCHITEPEQUEZ",
+   "coeficiente": 0.9666,
+   "observaciones": 13097
+  },
+  {
+   "codigo": 11,
+   "nombre": "RETALHULEU",
+   "coeficiente": 1.0092,
+   "observaciones": 10895
+  },
+  {
+   "codigo": 12,
+   "nombre": "SAN MARCOS",
+   "coeficiente": 0.9585,
+   "observaciones": 20659
+  },
+  {
+   "codigo": 13,
+   "nombre": "HUEHUETENANGO",
+   "coeficiente": 1.0264,
+   "observaciones": 19327
+  },
+  {
+   "codigo": 14,
+   "nombre": "QUICHE",
+   "coeficiente": 0.991,
+   "observaciones": 7270
+  },
+  {
+   "codigo": 15,
+   "nombre": "BAJA VERAPAZ",
+   "coeficiente": 1.0475,
+   "observaciones": 12018
+  },
+  {
+   "codigo": 16,
+   "nombre": "ALTA VERAPAZ",
+   "coeficiente": 1.0058,
+   "observaciones": 28086
+  },
+  {
+   "codigo": 17,
+   "nombre": "PETEN",
+   "coeficiente": 0.9805,
+   "observaciones": 31403
+  },
+  {
+   "codigo": 18,
+   "nombre": "IZABAL",
+   "coeficiente": 1.0365,
+   "observaciones": 15901
+  },
+  {
+   "codigo": 19,
+   "nombre": "ZACAPA",
+   "coeficiente": 1.0236,
+   "observaciones": 6498
+  },
+  {
+   "codigo": 20,
+   "nombre": "CHIQUIMULA",
+   "coeficiente": 1.0276,
+   "observaciones": 18204
+  },
+  {
+   "codigo": 21,
+   "nombre": "JALAPA",
+   "coeficiente": 0.9882,
+   "observaciones": 7647
+  },
+  {
+   "codigo": 22,
+   "nombre": "JUTIAPA",
+   "coeficiente": 0.9475,
+   "observaciones": 18614
+  }
+ ]
+}

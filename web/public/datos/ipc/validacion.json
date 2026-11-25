@@ -1,0 +1,127 @@
+{
+ "modelo": "SARIMAX(1,1,1)(0,0,2)[12] con deriva y El Niño como variable externa",
+ "entrenamiento": {
+  "inicio": "2010-11-01",
+  "fin": "2025-10-01"
+ },
+ "prueba": {
+  "inicio": "2025-11-01",
+  "fin": "2026-10-01"
+ },
+ "metricas": {
+  "MAE": 0.6524,
+  "RMSE": 0.8428,
+  "MAPE": 0.622
+ },
+ "ljung_box_p": 0.197,
+ "meses": [
+  {
+   "fecha": "2025-11-01",
+   "observado": 102.0957,
+   "pronostico": 101.8049,
+   "inferior_80": 101.307,
+   "superior_80": 102.3038,
+   "inferior_95": 101.0448,
+   "superior_95": 102.5693
+  },
+  {
+   "fecha": "2025-12-01",
+   "observado": 102.1687,
+   "pronostico": 102.1044,
+   "inferior_80": 101.294,
+   "superior_80": 102.9174,
+   "inferior_95": 100.8686,
+   "superior_95": 103.3514
+  },
+  {
+   "fecha": "2026-01-01",
+   "observado": 101.9851,
+   "pronostico": 102.3885,
+   "inferior_80": 101.3675,
+   "superior_80": 103.4134,
+   "inferior_95": 100.8328,
+   "superior_95": 103.9618
+  },
+  {
+   "fecha": "2026-02-01",
+   "observado": 102.3341,
+   "pronostico": 102.6363,
+   "inferior_80": 101.4384,
+   "superior_80": 103.8396,
+   "inferior_95": 100.8122,
+   "superior_95": 104.4847
+  },
+  {
+   "fecha": "2026-03-01",
+   "observado": 103.3813,
+   "pronostico": 102.9034,
+   "inferior_80": 101.5503,
+   "superior_80": 104.2635,
+   "inferior_95": 100.8441,
+   "superior_95": 104.9936
+  },
+  {
+   "fecha": "2026-04-01",
+   "observado": 104.3332,
+   "pronostico": 103.2915,
+   "inferior_80": 101.7963,
+   "superior_80": 104.7953,
+   "inferior_95": 101.0169,
+   "superior_95": 105.6038
+  },
+  {
+   "fecha": "2026-05-01",
+   "observado": 104.2047,
+   "pronostico": 103.5422,
+   "inferior_80": 101.9176,
+   "superior_80": 105.1769,
+   "inferior_95": 101.072,
+   "superior_95": 106.0569
+  },
+  {
+   "fecha": "2026-06-01",
+   "observado": 103.873,
+   "pronostico": 103.7791,
+   "inferior_80": 102.0339,
+   "superior_80": 105.5359,
+   "inferior_95": 101.1266,
+   "superior_95": 106.4828
+  },
+  {
+   "fecha": "2026-07-01",
+   "observado": 104.5562,
+   "pronostico": 104.1909,
+   "inferior_80": 102.3289,
+   "superior_80": 106.066,
+   "inferior_95": 101.3619,
+   "superior_95": 107.0778
+  },
+  {
+   "fecha": "2026-08-01",
+   "observado": 105.1866,
+   "pronostico": 104.403,
+   "inferior_80": 102.4333,
+   "superior_80": 106.3874,
+   "inferior_95": 101.4116,
+   "superior_95": 107.4593
+  },
+  {
+   "fecha": "2026-09-01",
+   "observado": 106.4317,
+   "pronostico": 104.5571,
+   "inferior_80": 102.4857,
+   "superior_80": 106.6447,
+   "inferior_95": 101.4123,
+   "superior_95": 107.7734
+  },
+  {
+   "fecha": "2026-10-01",
+   "observado": 106.2437,
+   "pronostico": 104.7745,
+   "inferior_80": 102.6044,
+   "superior_80": 106.9624,
+   "inferior_95": 101.4809,
+   "superior_95": 108.1465
+  }
+ ]
+}
