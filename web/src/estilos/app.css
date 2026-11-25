@@ -352,3 +352,33 @@ h3 {
 .pie p {
   margin: var(--ine-espacio-1) 0;
 }
+
+.aviso-supuesto {
+  margin: var(--ine-espacio-2) 0 0;
+  font-size: var(--ine-texto-sm);
+  color: var(--ine-naranja-oscuro);
+}
+
+.panel-poblacion {
+  margin-top: var(--ine-espacio-3);
+  padding: var(--ine-espacio-3);
+  background: var(--ine-gris-claro);
+  border-radius: var(--ine-radio-firma-sm) 0 0 0;
+}
+
+.panel-poblacion-valor {
+  margin: 0;
+}
+
+.panel-poblacion-valor strong {
+  font-size: var(--ine-texto-xl);
+  color: var(--ine-titulo);
+}
+
+.panel-poblacion .grafica {
+  margin: var(--ine-espacio-2) 0 0;
+}
+
+.panel-poblacion .fuente {
+  margin: 0;
+}

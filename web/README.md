@@ -29,7 +29,8 @@ npm run preview   # sirve dist/ para revisarlo antes de publicar
 ```
 public/datos/            generado; no se edita a mano
   catalogo.json          ← pipeline/construir_catalogo.py
-  territorio/            ← pipeline (departamentos.json; límites en GeoJSON pendientes)
+  territorio/            ← pipeline/construir_catalogo.py y pipeline/preparar_territorio.py
+  poblacion/             ← pipeline/preparar_poblacion.py
   ipc/                   ← celda final de modelos/ipc/sarimax_coeficientes_departamentales.ipynb
 src/
   App.tsx                encabezado, navegación y pie
@@ -49,5 +50,8 @@ src/
 
 ## Pendiente
 
-- Límites de departamentos y municipios en GeoJSON (`public/datos/territorio/departamentos.geojson`). Mientras no estén, el mapa muestra un aviso y la lista de departamentos sigue funcionando.
-- Publicación en GitHub Pages.
+- Usar `municipios.geojson` (ya generado) para bajar el mapa a municipio.
+
+## Publicación
+
+`.github/workflows/pages.yml` compila el sitio y lo publica en GitHub Pages cada vez que cambia `web/` en `main`. Hay que activarlo una vez en Settings → Pages → Source: «GitHub Actions».

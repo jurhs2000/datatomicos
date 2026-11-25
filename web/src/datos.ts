@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 // Tipos y carga de los archivos de public/datos/.
 // Los genera el pipeline (catálogo y territorio) y el notebook del IPC; no se editan a mano.
 
-export type NivelTerritorial = "nacional" | "region" | "departamento" | "municipio" | "lugar_poblado";
+export type NivelTerritorial = "nacional" | "region" | "departamento" | "municipio" | "lugar_poblado" | "sin_determinar";
 
 export interface Publicacion {
   id: string;
   titulo: string;
   tipo_publicacion: "encuesta" | "indice" | "censo" | "registro_administrativo" | "otro";
-  direccion_ine: string;
+  direccion_ine: string | null;
   tema: string;
   periodo_inicio: number;
   periodo_fin: number;
-  periodicidad: string;
+  periodicidad: string | null;
   nivel_territorial_minimo: NivelTerritorial;
   base_metodologica: string | null;
   url_publicacion: string;
@@ -23,6 +23,8 @@ export interface Publicacion {
   licencia: string | null;
   fecha_descarga: string | null;
   datos: string | null;
+  /** Cómo se determinaron el periodo y el nivel territorial; "supuesto" significa que falta verificarlos. */
+  como_se_determino: "metadatos" | "contenido" | "titulo" | "supuesto" | null;
   notas: string | null;
 }
 
@@ -60,6 +62,16 @@ export interface Validacion {
   meses: MesValidacion[];
 }
 
+export interface Poblacion {
+  fuente: string;
+  url: string;
+  anios: number[];
+  pais: number[];
+  /** Por código de departamento o municipio del INE (sin ceros a la izquierda). */
+  departamentos: Record<string, number[]>;
+  municipios: Record<string, number[]>;
+}
+
 export interface Coeficientes {
   anio_precios: number;
   departamentos: { codigo: number; nombre: string; coeficiente: number; observaciones: number }[];
@@ -68,12 +80,18 @@ export interface Coeficientes {
 /** Nivel territorial de más grueso a más fino: sirve para comparar niveles. */
 export const ORDEN_NIVEL: NivelTerritorial[] = ["nacional", "region", "departamento", "municipio", "lugar_poblado"];
 
+/** ¿La publicación tiene datos a nivel de departamento o más fino? */
+export function llegaADepartamento(nivel: NivelTerritorial): boolean {
+  return ORDEN_NIVEL.indexOf(nivel) >= ORDEN_NIVEL.indexOf("departamento");
+}
+
 export const NOMBRE_NIVEL: Record<NivelTerritorial, string> = {
   nacional: "Nacional",
   region: "Región",
   departamento: "Departamento",
   municipio: "Municipio",
   lugar_poblado: "Lugar poblado",
+  sin_determinar: "Por confirmar",
 };
 
 export type Estado<T> = { cargando: true } | { cargando: false; datos: T } | { cargando: false; error: string };

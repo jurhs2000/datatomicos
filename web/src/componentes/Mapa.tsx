@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { Map as MapaLibre, type GeoJSONSource, type MapLayerMouseEvent } from "maplibre-gl";
+import { Map as MapaLibre, setWorkerUrl, type GeoJSONSource, type MapLayerMouseEvent } from "maplibre-gl";
+// MapLibre 6 carga su worker como archivo aparte; con ?url, Vite lo incluye en la compilación.
+import urlWorker from "maplibre-gl/dist/maplibre-gl-worker.mjs?url";
 import { colorToken } from "./colores";
 import { leerJson } from "../datos";
 
@@ -7,6 +9,8 @@ interface Props {
   seleccionado: number | null;
   onSeleccion: (codigo: number | null) => void;
 }
+
+setWorkerUrl(urlWorker);
 
 const ARCHIVO = "./datos/territorio/departamentos.geojson";
 

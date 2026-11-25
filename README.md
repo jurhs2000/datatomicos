@@ -62,8 +62,10 @@ Requisitos: [Miniforge](https://conda-forge.org/download/) (o cualquier distribu
 conda env create -f environment.yml
 conda activate series-tiempo-geo
 
-# 2. Datos: catálogo e insumos del modelo
+# 2. Datos: catálogo, límites, población e insumos del modelo
 python pipeline/construir_catalogo.py
+python pipeline/preparar_territorio.py
+python pipeline/preparar_poblacion.py
 python modelos/ipc/preparar_insumos.py
 
 # 3. Modelo del IPC: abrir modelos/ipc/sarimax_coeficientes_departamentales.ipynb
@@ -85,9 +87,18 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 | Conjunto de datos | Producido por | Licencia | Uso en el proyecto | Fecha de descarga |
 |---|---|---|---|---|
 | [Precios recolectados del Índice de Precios al Consumidor](https://datos.ine.gob.gt/dataset/precios-recolectados-indice-de-precios-al-consumidor/resource/c5942f26-de9e-4b08-8232-df9dcafa819d) | Departamento de Estadísticas de Precios, INE | Open Data Commons Attribution License | Estimación del nivel de precios relativo por departamento | 2026-11-23 |
+| [Estimaciones y proyecciones de la población total por municipio, 2015-2030](https://datos.ine.gob.gt/dataset/proyecciones-de-poblacion-2015-2030) | Dirección de Censos y Encuestas, INE | No declarada en el portal | Población por departamento y municipio en el explorador | 2026-11-25 |
 | [Empalme del IPC por República, Base Anual 2024 = 100.00](https://datos.ine.gob.gt/dataset/ipc-por-producto-ano-2024-100-0/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910) | Departamento de Estadísticas de Precios, INE | Creative Commons Attribution | Serie histórica del IPC para la proyección | 2026-11-23 |
 
-**Fuentes complementarias:** *pendiente* (variables externas usadas en el modelo de proyección).
+**Catálogo:** las 146 publicaciones del catálogo (`catalogo/publicaciones.csv`) se registraron consultando la API de `datos.ine.gob.gt` y las páginas de `www.ine.gob.gt` el 2026-11-25. Cada una enlaza a su fuente original.
+
+**Fuentes complementarias:**
+
+| Conjunto de datos | Producido por | Licencia | Uso en el proyecto | Fecha de descarga |
+|---|---|---|---|---|
+| [Guatemala - Subnational Administrative Boundaries (COD-AB)](https://data.humdata.org/dataset/cod-ab-gtm) | CONRED, publicado por OCHA en HDX | CC BY-IGO | Límites de departamentos y municipios del mapa | 2026-11-25 |
+
+Las variables externas del modelo de proyección (El Niño, La Niña, cambio de gobierno y población) tienen fuentes *pendientes de documentar*.
 
 ## Metodología y rigor
 
@@ -102,6 +113,8 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 ## Limitaciones y posibles mejoras
 
 - **Muestra de datos.** La versión entregada funciona con una selección de publicaciones; el catálogo y el proceso están pensados para incorporar el resto.
+- **Catálogo.** 146 publicaciones; en 28 el nivel territorial está por confirmar y en algunas el periodo se infirió del título. El sitio las marca.
+- **Datos en el sitio.** Además del IPC, solo las proyecciones de población muestran cifras; el resto de publicaciones enlaza a su fuente.
 - **Nivel territorial.** El mapa llega a municipio. Los datos por lugar poblado del Censo 2018 podrían mostrarse como tabla al seleccionar un municipio.
 - **Solo datos publicados.** No se usan datos de etapas de procesamiento previas a la publicación en el portal.
 - **Proyección solo del IPC.** Es la serie publicada con la longitud y la frecuencia necesarias para un modelo de pronóstico.

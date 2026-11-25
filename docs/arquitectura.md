@@ -33,8 +33,7 @@ Las piezas se comunican por archivos y cada una se puede actualizar sin tocar la
 
 ## Pendiente
 
-- Esquema completo del catálogo con las publicaciones del inventario.
-- Publicación del sitio.
-- Fuente de los límites de departamentos y municipios.
+- Mostrar los municipios en el mapa.
+- Agregar datos de más publicaciones del catálogo.
 
 Las decisiones tomadas están en [`decisiones/`](decisiones/).

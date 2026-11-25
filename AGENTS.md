@@ -11,7 +11,7 @@ Herramienta del equipo Datatómicos para el Datatón INE 2026 (categoría Tecnol
 | Carpeta | Contenido |
 |---|---|
 | `catalogo/` | Metadatos de las publicaciones del INE; la interfaz lo lee |
-| `pipeline/` | Descarga y normalización de datos del portal |
+| `pipeline/` | Scripts que validan el catálogo y preparan límites y población para el sitio (ver `pipeline/README.md`) |
 | `modelos/ipc/` | Proyección del IPC y coeficientes departamentales (notebook, insumos y script de preparación) |
 | `datos/` | Archivos locales; `datos/crudos/` no se versiona y se regenera con scripts |
 | `web/` | Sitio estático (Vite, React, TypeScript, MapLibre, Observable Plot); ver `web/README.md` |
