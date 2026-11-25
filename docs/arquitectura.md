@@ -1,6 +1,6 @@
 # Arquitectura
 
-> **Estado:** en definición. Este documento describe la organización acordada; las tecnologías de la interfaz y el formato de los archivos intermedios se documentarán al cerrarlos.
+> **Estado:** en desarrollo. Las tecnologías están en el [README](../README.md#tecnologías) y el formato de los archivos del sitio en [decisiones/0006](decisiones/0006-el-sitio-lee-archivos-generados.md).
 
 ## Vista general
 
@@ -33,9 +33,8 @@ Las piezas se comunican por archivos y cada una se puede actualizar sin tocar la
 
 ## Pendiente
 
-- Esquema del catálogo.
-- Formato de los archivos entre el pipeline y la interfaz.
-- Tecnologías de la interfaz y forma de publicación.
+- Esquema completo del catálogo con las publicaciones del inventario.
+- Publicación del sitio.
 - Fuente de los límites de departamentos y municipios.
 
 Las decisiones tomadas están en [`decisiones/`](decisiones/).

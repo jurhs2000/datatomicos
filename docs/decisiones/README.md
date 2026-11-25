@@ -9,3 +9,4 @@ Cada archivo documenta una decisión de diseño: el contexto, lo que se decidió
 | [0003](0003-catalogo-de-publicaciones.md) | Un catálogo de publicaciones como pieza central |
 | [0004](0004-proyeccion-solo-del-ipc.md) | Proyección solo para el IPC |
 | [0005](0005-datos-descargados-fuera-del-repositorio.md) | Los datos descargados no se versionan |
+| [0006](0006-el-sitio-lee-archivos-generados.md) | El sitio lee archivos generados y versionados |

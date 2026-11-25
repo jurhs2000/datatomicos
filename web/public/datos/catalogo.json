@@ -1,0 +1,49 @@
+{
+ "generado": "2026-11-25",
+ "publicaciones": [
+  {
+   "id": "ipc-empalme-republica-2024",
+   "titulo": "Empalme del IPC por República, Base Anual 2024 = 100.00",
+   "tipo_publicacion": "indice",
+   "direccion_ine": "Dirección de Índices y Estadísticas Continuas",
+   "tema": "Precios",
+   "periodo_inicio": 1983,
+   "periodo_fin": 2026,
+   "periodicidad": "mensual",
+   "nivel_territorial_minimo": "nacional",
+   "url_publicacion": "https://datos.ine.gob.gt/dataset/ipc-por-producto-ano-2024-100-0/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910",
+   "en_ckan": true,
+   "base_metodologica": "Año 2024 = 100.00 (empalme)",
+   "url_descarga": "https://datos.ine.gob.gt/dataset/4243818d-b479-4bc1-aae6-2735e2b51265/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910/download/ipc_emprepu_es25.xlsx",
+   "formato": [
+    "XLSX"
+   ],
+   "licencia": "Creative Commons Attribution",
+   "fecha_descarga": "2026-11-23",
+   "datos": "ipc",
+   "notas": "Serie mensual de marzo 1983 a octubre 2026. Es la base de la proyección del IPC."
+  },
+  {
+   "id": "precios-recolectados-ipc",
+   "titulo": "Precios recolectados del Índice de Precios al Consumidor",
+   "tipo_publicacion": "indice",
+   "direccion_ine": "Dirección de Índices y Estadísticas Continuas",
+   "tema": "Precios",
+   "periodo_inicio": 2017,
+   "periodo_fin": 2023,
+   "periodicidad": "mensual",
+   "nivel_territorial_minimo": "municipio",
+   "url_publicacion": "https://datos.ine.gob.gt/dataset/precios-recolectados-indice-de-precios-al-consumidor",
+   "en_ckan": true,
+   "base_metodologica": "IPC diciembre 2010 = 100 (canasta ENIGFAM 2009-2010)",
+   "url_descarga": "https://datos.ine.gob.gt/dataset/65ef0ddc-3cdc-4e42-8c09-f2d8ab12605a/resource/c5942f26-de9e-4b08-8232-df9dcafa819d/download/2023.xlsx",
+   "formato": [
+    "XLSX"
+   ],
+   "licencia": "Open Data Commons Attribution License",
+   "fecha_descarga": "2026-11-23",
+   "datos": "ipc",
+   "notas": "Un archivo por año. El proyecto usa 2023 para estimar el nivel de precios relativo por departamento."
+  }
+ ]
+}

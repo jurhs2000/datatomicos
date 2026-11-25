@@ -1,0 +1,18 @@
+# Entorno de Python del proyecto: modelo del IPC y pipeline de datos.
+# Crear con:  conda env create -f environment.yml
+name: series-tiempo-geo
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - numpy
+  - pandas
+  - scipy
+  - statsmodels
+  - statsforecast
+  - matplotlib
+  - openpyxl
+  - ipykernel
+  - requests
+  - geopandas
+  - pyarrow
