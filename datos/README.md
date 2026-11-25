@@ -5,3 +5,5 @@ Carpeta de trabajo local. `datos/crudos/` guarda lo descargado del portal del IN
 | Archivo | Se genera con |
 |---|---|
 | `crudos/precios_recolectados_2023.csv` | `python modelos/ipc/preparar_insumos.py` |
+| `crudos/limites-hdx/` | `python pipeline/preparar_territorio.py` |
+| `crudos/poblacion/` | `python pipeline/preparar_poblacion.py` |
