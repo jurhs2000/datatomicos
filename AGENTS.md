@@ -8,7 +8,16 @@ Herramienta del equipo Datatómicos para el Datatón INE 2026 (categoría Tecnol
 
 ## Estructura
 
-*Pendiente.* Se documentará cuando se defina la organización de carpetas.
+| Carpeta | Contenido |
+|---|---|
+| `catalogo/` | Metadatos de las publicaciones del INE; la interfaz lo lee |
+| `pipeline/` | Descarga y normalización de datos del portal |
+| `modelos/ipc/` | Proyección del IPC y coeficientes departamentales (notebook, insumos y script de preparación) |
+| `datos/` | Archivos locales; `datos/crudos/` no se versiona y se regenera con scripts |
+| `web/` | Sitio estático |
+| `docs/` | `arquitectura.md` y registro de decisiones en `docs/decisiones/` |
+
+Antes de cambiar la estructura o tomar una decisión de diseño, revisar `docs/decisiones/`. Una decisión nueva se registra con el siguiente número.
 
 ## Principios de diseño
 
