@@ -10,27 +10,28 @@ Lee catalogo/publicaciones.csv y catalogo/departamentos.csv, y escribe:
 """
 
 import csv
-import json
 import re
 import sys
 from datetime import date
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[1]
-CATALOGO = RAIZ / "catalogo"
-SALIDA = RAIZ / "web" / "public" / "datos"
+from comun import CATALOGO, SALIDA, escribir_json
 
 OBLIGATORIAS = [
-    "id", "titulo", "tipo_publicacion", "direccion_ine", "tema", "periodo_inicio",
-    "periodo_fin", "periodicidad", "nivel_territorial_minimo", "url_publicacion", "en_ckan",
+    "id", "titulo", "tipo_publicacion", "tema", "periodo_inicio", "periodo_fin",
+    "nivel_territorial_minimo", "url_publicacion", "en_ckan",
 ]
 OPCIONALES = [
-    "base_metodologica", "url_descarga", "formato", "licencia", "fecha_descarga", "datos", "notas",
+    "direccion_ine", "periodicidad", "base_metodologica", "url_descarga", "formato", "licencia",
+    "fecha_descarga", "datos", "como_se_determino", "notas",
 ]
 VALORES = {
     "tipo_publicacion": {"encuesta", "indice", "censo", "registro_administrativo", "otro"},
-    "periodicidad": {"mensual", "trimestral", "anual", "quinquenal", "decenal", "unica"},
-    "nivel_territorial_minimo": {"nacional", "region", "departamento", "municipio", "lugar_poblado"},
+    "periodicidad": {"mensual", "trimestral", "semestral", "anual", "quinquenal", "decenal", "unica", "irregular"},
+    "nivel_territorial_minimo": {
+        "nacional", "region", "departamento", "municipio", "lugar_poblado", "sin_determinar",
+    },
+    "como_se_determino": {"metadatos", "contenido", "titulo", "supuesto"},
     "en_ckan": {"si", "no"},
 }
 ID_VALIDO = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
@@ -83,11 +84,6 @@ def a_publicacion(fila: dict[str, str]) -> dict:
     publicacion["en_ckan"] = fila["en_ckan"] == "si"
     publicacion["formato"] = fila["formato"].split("|") if fila["formato"] else []
     return publicacion
-
-
-def escribir_json(ruta: Path, contenido) -> None:
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(json.dumps(contenido, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
 
 
 def main() -> None:

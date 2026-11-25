@@ -24,12 +24,12 @@ Formato: separador coma, UTF-8, fechas `aaaa-mm-dd`. Se puede editar en Excel si
 | `id` | Sí | Identificador único, en minúsculas y con guiones |
 | `titulo` | Sí | Título tal como lo publica el INE |
 | `tipo_publicacion` | Sí | `encuesta`, `indice`, `censo`, `registro_administrativo` u `otro` |
-| `direccion_ine` | Sí | Dirección del INE que la produce |
+| `direccion_ine` | No | Dirección del INE que la produce; vacío si no se identificó |
 | `tema` | Sí | Tema principal |
 | `periodo_inicio` | Sí | Primer año con datos (`aaaa`) |
 | `periodo_fin` | Sí | Último año con datos (`aaaa`); igual a `periodo_inicio` si es un solo año |
-| `periodicidad` | Sí | `mensual`, `trimestral`, `anual`, `quinquenal`, `decenal` o `unica` |
-| `nivel_territorial_minimo` | Sí | `nacional`, `region`, `departamento`, `municipio` o `lugar_poblado` |
+| `periodicidad` | No | `mensual`, `trimestral`, `semestral`, `anual`, `quinquenal`, `decenal`, `unica` o `irregular` |
+| `nivel_territorial_minimo` | Sí | `nacional`, `region`, `departamento`, `municipio`, `lugar_poblado` o `sin_determinar` si falta revisarlo |
 | `base_metodologica` | No | Periodo base o versión metodológica, si aplica |
 | `url_publicacion` | Sí | Página de la publicación en el portal |
 | `url_descarga` | No | Enlace directo al archivo |
@@ -37,5 +37,6 @@ Formato: separador coma, UTF-8, fechas `aaaa-mm-dd`. Se puede editar en Excel si
 | `en_ckan` | Sí | `si` si está en `datos.ine.gob.gt`, `no` si solo se descarga desde `www.ine.gob.gt` |
 | `licencia` | No | Licencia declarada; vacío si el portal no la declara |
 | `fecha_descarga` | No | Fecha en que el equipo descargó o consultó la publicación |
-| `datos` | No | Sección del sitio que muestra sus datos (por ejemplo `ipc`); vacío si solo aparece en el catálogo |
+| `datos` | No | Datos que muestra el sitio (`ipc`, `poblacion`); vacío si solo aparece en el catálogo |
+| `como_se_determino` | No | De dónde salen el periodo y el nivel territorial: `metadatos`, `contenido` (columnas del archivo), `titulo` o `supuesto`. El sitio marca los `supuesto` como pendientes de verificar |
 | `notas` | No | Aclaraciones |
