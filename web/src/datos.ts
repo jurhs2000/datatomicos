@@ -77,6 +77,24 @@ export interface Coeficientes {
   departamentos: { codigo: number; nombre: string; coeficiente: number; observaciones: number }[];
 }
 
+/** El lugar que se consulta en Explorar. */
+export type Lugar =
+  | { nivel: "pais" }
+  | { nivel: "departamento"; codigo: number; nombre: string }
+  | { nivel: "municipio"; codigo: number; nombre: string; departamento: Departamento };
+
+/** «Todo el país», «Totonicapán» o «Momostenango, Totonicapán». */
+export function nombreLugar(lugar: Lugar): string {
+  if (lugar.nivel === "pais") return "Todo el país";
+  if (lugar.nivel === "municipio") return `${lugar.nombre}, ${lugar.departamento.nombre}`;
+  return lugar.nombre;
+}
+
+/** «2018–2025», o un solo año si el periodo empieza y termina en el mismo. */
+export function textoPeriodo(desde: number, hasta: number): string {
+  return desde === hasta ? String(desde) : `${desde}–${hasta}`;
+}
+
 /** Nivel territorial de más grueso a más fino: sirve para comparar niveles. */
 export const ORDEN_NIVEL: NivelTerritorial[] = ["nacional", "region", "departamento", "municipio", "lugar_poblado"];
 

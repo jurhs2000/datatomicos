@@ -71,6 +71,8 @@ python modelos/ipc/preparar_insumos.py
 # 3. Modelo del IPC: abrir modelos/ipc/sarimax_coeficientes_departamentales.ipynb
 #    (VS Code o Jupyter, con el kernel del entorno) y ejecutar todas las celdas.
 #    La última celda exporta los resultados a web/public/datos/ipc/.
+#    Después, el pronóstico para la calculadora del sitio:
+python modelos/ipc/exportar_pronostico.py
 
 # 4. Sitio web
 cd web
@@ -156,6 +158,7 @@ El proyecto no usa servicios de pago. El sitio es estático y no necesita servid
 | MapLibre GL JS | Mapa de departamentos | BSD-3-Clause |
 | Observable Plot | Gráficas del IPC | ISC |
 | Ubuntu Sans (Google Fonts) | Tipografía | Ubuntu Font Licence |
+| Logotipo del INE (imagotipo horizontal a color) | Pie del sitio | Kit de diseño que el INE entregó a los participantes del Datatón INE 2026 para sus propuestas |
 
 ## Equipo
 

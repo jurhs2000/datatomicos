@@ -63,11 +63,6 @@ h3 {
   color: var(--ine-titulo);
 }
 
-.marca-sub {
-  font-size: var(--ine-texto-sm);
-  color: var(--ine-texto-secundario);
-}
-
 .encabezado nav {
   display: flex;
   gap: var(--ine-espacio-2);
@@ -96,39 +91,28 @@ h3 {
 }
 
 .portada {
-  padding: var(--ine-espacio-6) var(--ine-espacio-5);
+  margin-bottom: var(--ine-espacio-5);
+  padding: var(--ine-espacio-5);
   background: var(--ine-azul-oscuro);
   color: var(--ine-texto-invertido);
 }
 
 .portada h1 {
+  margin: 0;
   color: var(--ine-texto-invertido);
-  font-size: var(--ine-texto-2xl);
-  max-width: 20ch;
+  font-size: var(--ine-texto-3xl);
 }
 
-.portada p {
+.portada-subtitulo {
+  margin: var(--ine-espacio-1) 0 var(--ine-espacio-3);
+  font-size: var(--ine-texto-xl);
+  font-weight: var(--ine-peso-light);
+}
+
+.portada-valor {
+  margin: 0;
   max-width: 60ch;
   font-size: var(--ine-texto-lg);
-}
-
-.tarjetas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
-  gap: var(--ine-espacio-4);
-  margin-top: var(--ine-espacio-5);
-}
-
-.tarjeta {
-  display: block;
-  padding: var(--ine-espacio-4);
-  border: 1px solid var(--ine-borde);
-  text-decoration: none;
-  color: var(--ine-texto);
-}
-
-.tarjeta:hover {
-  border-color: var(--ine-azul-radiante);
 }
 
 .nota {
@@ -228,11 +212,104 @@ h3 {
   color: var(--ine-texto-secundario);
 }
 
-.resultados h2 {
-  margin-top: var(--ine-espacio-5);
+/* --- Ficha del lugar y el periodo ---------------------------------------- */
+
+.ficha-titulo {
+  font-size: var(--ine-texto-2xl);
+  margin-bottom: var(--ine-espacio-4);
 }
 
-.lista-publicaciones {
+.ficha-seccion + .ficha-seccion {
+  margin-top: var(--ine-espacio-6);
+}
+
+.ficha-seccion > h3 {
+  font-size: var(--ine-texto-lg);
+  padding-bottom: var(--ine-espacio-2);
+  border-bottom: 2px solid var(--ine-azul-radiante);
+}
+
+.cifras {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: var(--ine-espacio-3);
+}
+
+.tarjeta-cifra {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ine-espacio-1);
+  padding: var(--ine-espacio-3) var(--ine-espacio-4);
+  background: var(--ine-fondo);
+  border: 1px solid var(--ine-borde);
+}
+
+.tarjeta-cifra-estimacion {
+  border-style: dashed;
+  border-color: var(--ine-naranja);
+}
+
+.tarjeta-cifra-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ine-espacio-2);
+}
+
+.tarjeta-cifra h4 {
+  margin: 0;
+  font-size: var(--ine-texto-md);
+  color: var(--ine-texto-secundario);
+  font-weight: var(--ine-peso-semibold);
+}
+
+.tarjeta-cifra-valor {
+  margin: 0;
+}
+
+.tarjeta-cifra-valor strong {
+  font-size: var(--ine-texto-xl);
+  color: var(--ine-titulo);
+}
+
+.tarjeta-cifra-anio {
+  color: var(--ine-texto-secundario);
+}
+
+.tarjeta-cifra-nota {
+  margin: 0;
+  font-size: var(--ine-texto-sm);
+}
+
+.tarjeta-cifra .grafica {
+  margin: var(--ine-espacio-1) 0 0;
+}
+
+.tarjeta-cifra .fuente {
+  margin: var(--ine-espacio-1) 0 0;
+}
+
+.tarjeta-cifra .boton {
+  align-self: flex-start;
+}
+
+.conteo {
+  font-size: var(--ine-texto-lg);
+  margin: 0 0 var(--ine-espacio-3);
+}
+
+.conteo strong {
+  color: var(--ine-titulo);
+}
+
+.grupo-titulo {
+  margin: var(--ine-espacio-5) 0 var(--ine-espacio-1);
+  font-size: var(--ine-texto-md);
+  color: var(--ine-titulo);
+}
+
+.lista-productos {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -240,22 +317,23 @@ h3 {
   gap: var(--ine-espacio-3);
 }
 
-.publicacion {
+.producto {
   padding: var(--ine-espacio-3) var(--ine-espacio-4);
   border: 1px solid var(--ine-borde);
 }
 
-.publicacion h3 {
-  margin-bottom: var(--ine-espacio-1);
+.producto h5 {
+  margin: 0 0 var(--ine-espacio-1);
+  font-size: var(--ine-texto-md);
 }
 
-.publicacion-meta {
+.producto-meta {
   margin: 0 0 var(--ine-espacio-2);
   font-size: var(--ine-texto-sm);
   color: var(--ine-texto-secundario);
 }
 
-.publicacion-datos {
+.producto-datos {
   display: grid;
   grid-template-columns: max-content 1fr;
   gap: var(--ine-espacio-1) var(--ine-espacio-3);
@@ -263,12 +341,171 @@ h3 {
   font-size: var(--ine-texto-sm);
 }
 
-.publicacion-datos dt {
+.producto-datos dt {
   color: var(--ine-texto-secundario);
 }
 
-.publicacion-datos dd {
+.producto-datos dd {
   margin: 0;
+}
+
+.producto .nota {
+  margin: var(--ine-espacio-2) 0 0;
+  font-size: var(--ine-texto-sm);
+}
+
+/* --- Calculadora del IPC ------------------------------------------------- */
+
+.bajada {
+  max-width: 60ch;
+  font-size: var(--ine-texto-lg);
+}
+
+.calculadora {
+  display: grid;
+  grid-template-columns: minmax(16rem, 22rem) 1fr;
+  gap: var(--ine-espacio-5);
+  align-items: start;
+  margin-top: var(--ine-espacio-5);
+}
+
+@media (max-width: 52rem) {
+  .calculadora {
+    grid-template-columns: 1fr;
+  }
+}
+
+.calculadora-controles {
+  display: grid;
+  gap: var(--ine-espacio-4);
+  padding: var(--ine-espacio-4);
+  border: 1px solid var(--ine-borde);
+}
+
+.control {
+  display: grid;
+  gap: var(--ine-espacio-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-weight: var(--ine-peso-semibold);
+  color: var(--ine-titulo);
+}
+
+.control input[type="range"] {
+  accent-color: var(--ine-azul-radiante);
+  width: 100%;
+}
+
+.control select {
+  padding: var(--ine-espacio-2);
+  font: inherit;
+  font-weight: var(--ine-peso-regular);
+}
+
+.control-valor {
+  font-size: var(--ine-texto-lg);
+}
+
+.control-nino legend {
+  margin-bottom: var(--ine-espacio-2);
+}
+
+.meses-nino {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ine-espacio-1);
+}
+
+.mes-nino {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ine-espacio-1);
+  padding: var(--ine-espacio-1) var(--ine-espacio-2);
+  border: 1px solid var(--ine-borde);
+  border-radius: var(--ine-radio-firma-sm) 0 0 0;
+  font-size: var(--ine-texto-sm);
+  font-weight: var(--ine-peso-regular);
+  color: var(--ine-texto);
+  cursor: pointer;
+}
+
+.mes-nino input {
+  accent-color: var(--ine-naranja-oscuro);
+  margin: 0;
+}
+
+.mes-nino.activo {
+  border-color: var(--ine-naranja);
+  background: var(--ine-naranja-claro);
+  color: var(--ine-naranja-oscuro);
+}
+
+.boton-texto {
+  justify-self: start;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--ine-texto-sm);
+  font-weight: var(--ine-peso-regular);
+  color: var(--ine-enlace);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.resultado-cifra {
+  margin: var(--ine-espacio-3) 0 0;
+  font-size: var(--ine-texto-lg);
+}
+
+.resultado-cifra strong {
+  font-size: var(--ine-texto-2xl);
+  color: var(--ine-titulo);
+}
+
+.leyenda-nino::before {
+  width: 0.6rem !important;
+  height: 0.6rem !important;
+  border-radius: 50%;
+  background: var(--ine-naranja-oscuro);
+}
+
+.tabla-proyeccion {
+  margin: var(--ine-espacio-3) 0;
+}
+
+.tabla-proyeccion summary {
+  cursor: pointer;
+  color: var(--ine-enlace);
+}
+
+.tabla-proyeccion table {
+  width: 100%;
+  margin-top: var(--ine-espacio-2);
+  border-collapse: collapse;
+  font-size: var(--ine-texto-sm);
+}
+
+.tabla-proyeccion th,
+.tabla-proyeccion td {
+  padding: var(--ine-espacio-1) var(--ine-espacio-2);
+  border-bottom: 1px solid var(--ine-borde);
+  text-align: right;
+}
+
+.tabla-proyeccion th:first-child,
+.tabla-proyeccion td:first-child {
+  text-align: left;
+}
+
+.origen {
+  padding: var(--ine-espacio-4);
+  background: var(--ine-gris-claro);
+}
+
+.origen p {
+  max-width: 70ch;
 }
 
 /* --- IPC ----------------------------------------------------------------- */
@@ -343,10 +580,27 @@ h3 {
 /* --- Pie ----------------------------------------------------------------- */
 
 .pie {
-  padding: var(--ine-espacio-4) var(--ine-espacio-5);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ine-espacio-5);
+  padding: var(--ine-espacio-5);
   border-top: 1px solid var(--ine-borde);
   font-size: var(--ine-texto-sm);
   color: var(--ine-texto-secundario);
+}
+
+/* El logo va sobre blanco, sin deformar y con aire alrededor. */
+.pie-logo {
+  display: block;
+  width: 186px;
+  height: auto;
+  margin: var(--ine-espacio-2);
+}
+
+.pie-texto {
+  flex: 1 1 24rem;
+  max-width: 70ch;
 }
 
 .pie p {
@@ -357,28 +611,4 @@ h3 {
   margin: var(--ine-espacio-2) 0 0;
   font-size: var(--ine-texto-sm);
   color: var(--ine-naranja-oscuro);
-}
-
-.panel-poblacion {
-  margin-top: var(--ine-espacio-3);
-  padding: var(--ine-espacio-3);
-  background: var(--ine-gris-claro);
-  border-radius: var(--ine-radio-firma-sm) 0 0 0;
-}
-
-.panel-poblacion-valor {
-  margin: 0;
-}
-
-.panel-poblacion-valor strong {
-  font-size: var(--ine-texto-xl);
-  color: var(--ine-titulo);
-}
-
-.panel-poblacion .grafica {
-  margin: var(--ine-espacio-2) 0 0;
-}
-
-.panel-poblacion .fuente {
-  margin: 0;
 }

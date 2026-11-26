@@ -124,7 +124,13 @@ La última celda escribe en `web/public/datos/ipc/` los archivos que lee la secc
 | `validacion.json` | Modelo, periodos de entrenamiento y prueba, métricas, p-valor de Ljung–Box y pronóstico con intervalos para los 12 meses de prueba |
 | `coeficientes.json` | Coeficiente y número de observaciones por departamento |
 
-El pronóstico de meses futuros que genera el panel todavía no se exporta al sitio.
+El pronóstico de meses futuros lo exporta `exportar_pronostico.py`, que no depende del notebook:
+
+```bash
+python modelos/ipc/exportar_pronostico.py
+```
+
+Reajusta el mismo modelo del panel (últimos 180 meses) y escribe `pronostico.json`: para cada uno de los próximos 24 meses, la media del pronóstico en logaritmos sin El Niño y su desviación estándar, más el coeficiente de El Niño. En una regresión con errores ARIMA, El Niño solo suma su coeficiente al logaritmo del mes en que ocurre y no cambia la varianza, así que la Calculadora del IPC del sitio recalcula cualquier escenario (horizonte, meses con El Niño y departamento) igual que el panel. El script lo comprueba con dos escenarios antes de escribir el archivo y se detiene si la diferencia supera 0.000001 puntos del índice.
 
 ## Limitaciones y posibles mejoras
 

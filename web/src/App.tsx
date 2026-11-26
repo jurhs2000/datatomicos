@@ -1,33 +1,29 @@
 import { lazy, Suspense } from "react";
-import { RUTAS, useRuta, type Ruta } from "./navegacion";
-import { Inicio } from "./vistas/Inicio";
+import { NAVEGACION, RUTAS, useUbicacion, type Ruta } from "./navegacion";
 
-// El explorador (MapLibre) y el IPC (Observable Plot) se cargan solo al abrirlos,
-// para que la portada abra rápido.
+// Cada página (MapLibre en Explorar, Observable Plot en la calculadora) se carga al abrirla.
 const VISTAS: Record<Ruta, React.ComponentType> = {
-  inicio: Inicio,
-  explorador: lazy(() => import("./vistas/Explorador").then((m) => ({ default: m.Explorador }))),
-  ipc: lazy(() => import("./vistas/Ipc").then((m) => ({ default: m.Ipc }))),
+  explorar: lazy(() => import("./vistas/Explorador").then((m) => ({ default: m.Explorador }))),
+  calculadora: lazy(() => import("./vistas/Ipc").then((m) => ({ default: m.Ipc }))),
 };
 
 export function App() {
-  const ruta = useRuta();
+  const { ruta } = useUbicacion();
   const Vista = VISTAS[ruta];
 
   return (
     <div className="ine-base sitio">
       <header className="encabezado">
-        <a className="marca" href={RUTAS.inicio.hash}>
+        <a className="marca" href={RUTAS.explorar.hash}>
           <span className="ine-tribarra" aria-hidden="true">
             <span />
             <span />
             <span />
           </span>
-          <span className="marca-nombre">Datatómicos</span>
-          <span className="marca-sub">Datos del INE por tiempo y territorio</span>
+          <span className="marca-nombre">Atlas INE</span>
         </a>
-        <nav aria-label="Secciones">
-          {(Object.keys(RUTAS) as Ruta[]).map((r) => (
+        <nav aria-label="Páginas">
+          {NAVEGACION.map((r) => (
             <a key={r} href={RUTAS[r].hash} aria-current={r === ruta ? "page" : undefined}>
               {RUTAS[r].titulo}
             </a>
@@ -42,15 +38,23 @@ export function App() {
       </main>
 
       <footer className="pie">
-        <p>
-          <strong>Fuente de los datos:</strong> Instituto Nacional de Estadística (INE), Guatemala.{" "}
-          <a href="https://datos.ine.gob.gt">datos.ine.gob.gt</a> ·{" "}
-          <a href="https://www.ine.gob.gt">www.ine.gob.gt</a>
-        </p>
-        <p>
-          Proyecto del equipo Datatómicos para el Datatón INE 2026. Las proyecciones y estimaciones marcadas como tales
-          son cálculos del equipo, no cifras oficiales del INE.
-        </p>
+        <img
+          className="pie-logo"
+          src="./ine-imagotipo-horizontal-color.svg"
+          alt="Instituto Nacional de Estadística, Guatemala"
+          width={186}
+          height={60}
+        />
+        <div className="pie-texto">
+          <p>
+            Atlas INE es una propuesta del equipo Datatómicos para el Datatón INE 2026. Datos del Instituto Nacional de
+            Estadística de Guatemala; cada cifra enlaza a su fuente.
+          </p>
+          <p>
+            <a href="https://www.ine.gob.gt">www.ine.gob.gt</a> · <a href="https://datos.ine.gob.gt">datos.ine.gob.gt</a>.
+            Las proyecciones y estimaciones marcadas como tales son cálculos del equipo, no cifras oficiales del INE.
+          </p>
+        </div>
       </footer>
     </div>
   );
