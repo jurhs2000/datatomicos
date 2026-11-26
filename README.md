@@ -2,7 +2,7 @@
 
 **Guatemala en datos.** Propuesta del equipo Datatómicos para el **Datatón INE 2026**, categoría Tecnológica y ciencias de datos.
 
-**Sitio:** [jurhs2000.github.io/datatomicos](https://jurhs2000.github.io/datatomicos/)
+**Sitio:** [jurhs2000.github.io/datatomicos](https://jurhs2000.github.io/datatomicos/) · **Presentación:** [PDF](docs/presentacion.pdf) · **Video demostrativo:** [2 a 3 minutos](PENDIENTE-ENLACE-VIDEO)
 
 Elige un lugar de Guatemala y un periodo, y Atlas INE reúne lo que el INE ha medido ahí: las cifras, de dónde sale cada una y hacia dónde van.
 
@@ -30,14 +30,14 @@ El sitio tiene tres páginas.
 
 Es la portada. Se elige un periodo en una barra de años y un lugar en el mapa, de departamento a municipio, y se puede filtrar por tema del portal y por origen (el tipo de operación y la operación estadística). El resultado es la ficha de ese lugar y ese periodo:
 
-- **En cifras:** la población del departamento o municipio, según las proyecciones oficiales, y, con un departamento elegido, el nivel de precios estimado a partir del IPC.
+- **En cifras:** la población del departamento o municipio, según las proyecciones oficiales, y, con un departamento elegido, el nivel de precios estimado a partir del IPC. Los productos con cifras procesadas (por ahora, nacimientos y establecimientos educativos) llevan un botón «Ver cifras» en la lista; al usarlo, sus indicadores aparecen aquí para el mismo lugar y periodo.
 - **Lo que hay del INE:** los productos que cubren ese lugar y ese periodo, agrupados por nivel territorial. Cada uno dice de qué operación estadística y de qué edición sale, y enlaza a su página en el portal.
 
 La dirección de la página guarda la consulta, así que un enlace abre la misma ficha.
 
 ### Origen de los datos
 
-Las operaciones estadísticas del INE, agrupadas por tipo. Al elegir una se ven su descripción, sus ediciones, de qué otras usa insumos y cuáles se alimentan de ella. Por ejemplo, la ENIGH da los ponderadores del IPC y sostiene la Canasta Básica Alimentaria y un indicador ODS.
+Las operaciones estadísticas del INE, agrupadas por tipo. Al elegir una se ven su descripción, sus ediciones, de qué otras usa insumos y cuáles se alimentan de ella. Por ejemplo, la ENIGH da los ponderadores del IPC y sostiene la Canasta Básica Alimentaria y, a través del IPC, un indicador ODS.
 
 ### Calculadora del IPC
 
@@ -52,6 +52,7 @@ El detalle está en [docs/arquitectura.md](docs/arquitectura.md) y las decisione
 Principios que guían el diseño:
 
 - **Un catálogo como pieza central.** Cada producto del INE se describe con el mismo esquema (periodo, nivel territorial, operación estadística, edición, fuente y fecha de consulta) y se organiza en operación › edición › producto. La interfaz lee el catálogo, así que agregar un producto es agregar una fila y no modificar código.
+- **Un formato común para las cifras.** Cada producto con cifras por lugar y año es un script de `pipeline/` que escribe el mismo formato en `web/public/datos/cifras/`. El sitio no tiene código propio para cada producto: sumar uno es escribir otro script (detalle en [`pipeline/README.md`](pipeline/README.md)).
 - **Datos separados de la interfaz.** El procesamiento de datos genera archivos que la interfaz consume; cada parte se puede actualizar por separado.
 - **Lo oficial y lo estimado, siempre distinguibles.** Los cálculos propios se identifican visualmente y se documenta su método.
 
@@ -65,17 +66,19 @@ Principios que guían el diseño:
 
 ## Instalación y uso
 
-Requisitos: [Miniforge](https://conda-forge.org/download/) (o cualquier distribución de conda) y Node.js 20 o superior.
+Requisitos: [Miniforge](https://conda-forge.org/download/) (o cualquier distribución de conda) y Node.js 22 o superior.
 
 ```bash
 # 1. Entorno de Python
 conda env create -f environment.yml
 conda activate series-tiempo-geo
 
-# 2. Datos: catálogo, límites, población e insumos del modelo
+# 2. Datos: catálogo, límites, población, cifras por territorio e insumos del modelo
 python pipeline/construir_catalogo.py
 python pipeline/preparar_territorio.py
 python pipeline/preparar_poblacion.py
+python pipeline/preparar_nacimientos.py
+python pipeline/preparar_establecimientos.py
 python modelos/ipc/preparar_insumos.py
 
 # 3. Modelo del IPC: abrir modelos/ipc/sarimax_coeficientes_departamentales.ipynb
@@ -100,6 +103,8 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 |---|---|---|---|---|
 | [Precios recolectados del Índice de Precios al Consumidor](https://datos.ine.gob.gt/dataset/precios-recolectados-indice-de-precios-al-consumidor/resource/c5942f26-de9e-4b08-8232-df9dcafa819d) | Departamento de Estadísticas de Precios, INE | Open Data Commons Attribution License | Estimación del nivel de precios relativo por departamento | 2026-11-23 |
 | [Estimaciones y proyecciones de la población total por municipio, 2015-2030](https://datos.ine.gob.gt/dataset/proyecciones-de-poblacion-2015-2030) | Dirección de Censos y Encuestas, INE | No declarada en el portal | Población por departamento y municipio en el explorador | 2026-11-25 |
+| [Estadísticas vitales: nacimientos](https://datos.ine.gob.gt/dataset/estadisticas-vitales-nacimientos) | Unidad de Estadísticas de Salud, INE | No declarada en el portal | Nacimientos por municipio, 2018-2025, en «En cifras» | 2026-11-26 |
+| [Establecimientos de educación formal](https://datos.ine.gob.gt/dataset/establecimientos-educacion-formal) | Unidad de Estadísticas de Educación, INE | No declarada en el portal | Establecimientos educativos por municipio, 2022-2025, en «En cifras» | 2026-11-26 |
 | [Empalme del IPC por República, Base Anual 2024 = 100.00](https://datos.ine.gob.gt/dataset/ipc-por-producto-ano-2024-100-0/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910) | Departamento de Estadísticas de Precios, INE | Creative Commons Attribution | Serie histórica del IPC para la proyección | 2026-11-23 |
 | [Estimaciones y proyecciones de población nacionales 1950-2050](https://www.ine.gob.gt/proyecciones/) | Dirección de Censos y Encuestas, INE | No declarada (publicada en www.ine.gob.gt, fuera del portal de datos abiertos) | Variable externa candidata del modelo del IPC; no quedó en el modelo final | 2026-11-25 |
 
@@ -118,11 +123,12 @@ El detalle de cómo se construye cada variable externa está en [`modelos/ipc/RE
 
 ## Metodología y rigor
 
-- Se usan únicamente datos publicados por el INE en su portal, con las definiciones y metadatos oficiales.
+- Las cifras estadísticas provienen de bases publicadas por el INE, con sus definiciones y metadatos oficiales. Los límites del mapa y el índice de El Niño vienen de las fuentes abiertas citadas en [Datos utilizados](#datos-utilizados).
 - Cada publicación muestra su periodo de referencia o versión metodológica.
 - **Proyección del IPC:** modelo SARIMAX entrenado sobre la serie mensual del IPC nacional, con el fenómeno de El Niño como variable externa. Se evaluó fuera de muestra sobre los últimos 12 meses disponibles (noviembre 2025 a octubre 2026), con un error porcentual absoluto medio (MAPE) de 0.62 %. En el modelo final, la presencia de El Niño se asocia con un nivel del IPC aproximadamente 0.15 % mayor; es una asociación estimada, no un efecto causal. Como los valores futuros de El Niño no se conocen, el pronóstico hacia adelante se calcula por escenarios: se indica en qué meses se espera el fenómeno.
 - **Estimación departamental:** coeficientes de nivel de precios relativo por departamento, calculados a partir de los precios recolectados para el IPC en 2023, comparando el mismo artículo, en la misma presentación y el mismo mes entre departamentos. El INE publica el IPC a nivel nacional y por región; estos coeficientes son una estimación del equipo y no sustituyen una cifra oficial.
-- La herramienta no intenta identificar personas, hogares ni empresas, y solo trabaja con datos agregados publicados.
+- **Cifras por territorio:** se calculan por municipio y se suman a departamento y país; los porcentajes salen de esos conteos y nunca de promediar porcentajes. Los nacimientos se cuentan por residencia de la madre y año de registro, y no incluyen los registros con residencia ignorada o en el extranjero. Los establecimientos se cuentan por código, así que una escuela con varios niveles o jornadas puede tener más de uno.
+- La herramienta no intenta identificar personas, hogares ni empresas, y solo muestra datos agregados.
 
 El detalle del modelo, su validación y los supuestos sobre las variables externas están en [`modelos/ipc/README.md`](modelos/ipc/README.md).
 
@@ -131,7 +137,7 @@ El detalle del modelo, su validación y los supuestos sobre las variables extern
 - **Muestra de datos.** La versión entregada funciona con una selección de publicaciones; el catálogo y el proceso están pensados para incorporar el resto.
 - **Catálogo.** 146 productos; en 28 el nivel territorial está por confirmar, en algunos el periodo se infirió del título y en 41 el nivel de procesamiento es un supuesto. El sitio los marca.
 - **Relaciones entre operaciones.** Salen de leer metodologías y documentos del INE; 4 de las 26 están marcadas como probables, porque el documento las sugiere sin decirlo de forma explícita.
-- **Datos en el sitio.** Además del IPC, solo las proyecciones de población muestran cifras; el resto de publicaciones enlaza a su fuente.
+- **Datos en el sitio.** Además del IPC, muestran cifras las proyecciones de población, los nacimientos y los establecimientos educativos (estos últimos solo para 2022-2025); el resto de productos enlaza a su fuente. Sumar otro es escribir su script con el formato común.
 - **Nivel territorial.** El mapa llega a municipio. Los datos por lugar poblado del Censo 2018 podrían mostrarse como tabla al seleccionar un municipio.
 - **Solo datos publicados.** No se usan datos de etapas de procesamiento previas a la publicación en el portal.
 - **Proyección solo del IPC.** Es la serie publicada con la longitud y la frecuencia necesarias para un modelo de pronóstico.
@@ -142,9 +148,8 @@ El detalle del modelo, su validación y los supuestos sobre las variables extern
 
 El equipo usó herramientas de IA generativa como asistentes durante el Datatón:
 
-- **Claude Code** (Anthropic, modelo Claude Opus 5.5, también con la extensión Claude in Chrome): consultó la API pública del portal de datos abiertos y leyó páginas del portal para armar el catálogo y la clasificación por operación estadística; escribió el pipeline de datos y buena parte del código del sitio; adaptó el notebook del modelo del IPC al repositorio y verificó sus resultados; redactó documentación, incluido este README, y apoyó la estructura y los textos de la presentación y del video.
-- **Codex** (OpenAI, modelo GPT-6.1 Terra): desarrollo y ajustes de la interfaz del sitio.
-- **Gamma**: diseño de la presentación en PDF a partir de los textos del equipo.
+- **Claude Code** (Anthropic, modelo Claude Opus 5.5, también con la extensión Claude in Chrome): consultó la API pública del portal de datos abiertos y leyó páginas del portal para armar el catálogo y la clasificación por operación estadística; escribió el pipeline de datos y buena parte del código del sitio; adaptó el notebook del modelo del IPC al repositorio y verificó sus resultados; redactó documentación, incluido este README, apoyó la estructura y los textos de la presentación y del video, y escribió el script que arma la presentación en PowerPoint.
+- **Codex** (OpenAI, modelos GPT-6.1 Terra y GPT-6.1 Sol): desarrollo y ajustes de la interfaz del sitio.
 
 El modelo del IPC lo desarrolló el equipo. De las 41 descripciones de operaciones de `catalogo/operaciones.csv`, las 32 marcadas como `propia` son resúmenes redactados con ayuda de IA y revisados por el equipo; las otras 9 citan el portal del INE.
 
