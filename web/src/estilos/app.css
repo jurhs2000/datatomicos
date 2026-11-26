@@ -193,6 +193,65 @@ h3 {
   color: var(--ine-titulo);
 }
 
+.linea-tiempo-control {
+  position: relative;
+  height: 2.75rem;
+  margin: var(--ine-espacio-2) 0;
+}
+
+.linea-tiempo-pista {
+  position: absolute;
+  top: 50%;
+  left: 0.625rem;
+  right: 0.625rem;
+  height: 0.375rem;
+  transform: translateY(-50%);
+  background: var(--ine-gris-claro);
+  border-radius: var(--ine-radio-tribarra);
+}
+
+.linea-tiempo-seleccion {
+  position: absolute;
+  height: 100%;
+  background: var(--ine-azul-oscuro);
+}
+
+.filtros .linea-tiempo-control input[type="range"] {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.linea-tiempo-control input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 2px solid var(--ine-azul-oscuro);
+  border-radius: 50%;
+  background: var(--ine-blanco);
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.linea-tiempo-control input[type="range"]::-moz-range-thumb {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid var(--ine-azul-oscuro);
+  border-radius: 50%;
+  background: var(--ine-blanco);
+  cursor: grab;
+  pointer-events: auto;
+}
+
+.linea-tiempo-control input[type="range"]:focus-visible {
+  outline: 2px solid var(--ine-azul-oscuro);
+  outline-offset: 2px;
+}
+
 .mapa {
   position: relative;
 }
