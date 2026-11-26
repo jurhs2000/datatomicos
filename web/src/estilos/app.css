@@ -454,6 +454,43 @@ h3 {
   align-self: flex-start;
 }
 
+.productos-cifras {
+  display: grid;
+  gap: var(--ine-espacio-3);
+  margin-top: var(--ine-espacio-3);
+}
+
+.producto-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: var(--ine-espacio-4);
+}
+
+.producto-kpi {
+  min-width: 0;
+}
+
+.producto-kpi h5 {
+  margin: var(--ine-espacio-2) 0;
+  font-size: var(--ine-texto-md);
+  color: var(--ine-titulo);
+}
+
+.tarjeta-producto > .nota,
+.producto-kpi > .nota {
+  margin: var(--ine-espacio-1) 0;
+}
+
+.producto-ver-cifras {
+  margin-top: var(--ine-espacio-3);
+}
+
+.producto-ver-cifras[aria-pressed="true"] {
+  color: var(--ine-azul-oscuro);
+  background: var(--ine-blanco);
+  border-color: var(--ine-azul-oscuro);
+}
+
 .conteo {
   font-size: var(--ine-texto-lg);
   margin: 0 0 var(--ine-espacio-3);

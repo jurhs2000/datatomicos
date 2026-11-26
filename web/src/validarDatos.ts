@@ -42,8 +42,44 @@ const coeficientes = (v: unknown) => campos(v, { anio_precios: numero, departame
 const coordenadas = (v: unknown): boolean => Array.isArray(v) && v.length > 0 && (v.every(numero) ? v.length >= 2 : v.every(coordenadas));
 const limites = (v: unknown, municipios: boolean) => campos(v, { type: (x) => x === "FeatureCollection", features: (x) => lista(x, (f) => campos(f, { type: (t) => t === "Feature", properties: (p) => campos(p, municipios ? { codigo: numero, nombre: texto, departamento: numero } : { codigo: numero, nombre: texto }), geometry: (g) => campos(g, { type: (t) => t === "Polygon" || t === "MultiPolygon", coordinates: coordenadas }) }), 1) });
 
+const nombreArchivoCifras = (v: unknown): v is string => texto(v) && v !== "indice" && /^[a-zA-Z0-9_-]+$/.test(v);
+const enteroNoNegativo = (v: unknown): v is number => numero(v) && Number.isSafeInteger(v) && v >= 0;
+const nivelCifra = (v: unknown) => v === "pais" || v === "departamento" || v === "municipio";
+const indiceCifras = (v: unknown) => lista(v, nombreArchivoCifras) && new Set(v).size === v.length;
+const cifras = (v: unknown) => {
+  if (!campos(v, {
+    orden: enteroNoNegativo, producto: texto, titulo_catalogo: texto, operacion: texto,
+    operacion_nombre: texto, edicion: (x) => x === null || texto(x), url: urlWeb,
+    titulo: texto, fuente: texto, fecha_descarga: fecha, nota: texto, nivel_minimo: nivelCifra,
+    anios: (x) => lista(x, (a) => enteroNoNegativo(a) && a > 0, 1),
+    kpis: (x) => lista(x, (k) => campos(k, { id: texto, nombre: texto, unidad: texto, tipo: (t) => t === "conteo" || t === "porcentaje" || t === "tasa" }), 1),
+    filas: (x) => lista(x, objeto),
+  })) return false;
+  const anios = v.anios as number[];
+  if (!anios.every((a, i) => i === 0 || a > anios[i - 1])) return false;
+  const kpis = v.kpis as Objeto[];
+  const tipos = new Map(kpis.map((k) => [k.id, k.tipo]));
+  if (tipos.size !== kpis.length || kpis.some((k) => !k.id)) return false;
+  const claves = new Set<string>();
+  return (v.filas as Objeto[]).every((f) => {
+    if (!campos(f, { kpi: (k) => tipos.has(k), nivel: nivelCifra, territorio: enteroNoNegativo, anio: (a) => anios.includes(a as number) })) return false;
+    if ((f.nivel === "pais") !== (f.territorio === 0)) return false;
+    const clave = JSON.stringify([f.kpi, f.nivel, f.territorio, f.anio]);
+    if (claves.has(clave)) return false;
+    claves.add(clave);
+    if (tipos.get(f.kpi) === "porcentaje") {
+      return enteroNoNegativo(f.numerador) && enteroNoNegativo(f.denominador) && f.denominador > 0
+        && f.numerador <= f.denominador
+        && numero(f.valor) && f.valor >= 0 && f.valor <= 100;
+    }
+    return numero(f.valor) && f.valor >= 0 && (tipos.get(f.kpi) !== "conteo" || Number.isSafeInteger(f.valor));
+  });
+};
+
 /** Rechaza rutas no conocidas para que un archivo nuevo declare explícitamente su contrato. */
 export function validarDatos(ruta: string, valor: unknown): boolean {
+  if (ruta === "cifras/indice.json") return indiceCifras(valor);
+  if (/^cifras\/[a-zA-Z0-9_-]+\.json$/.test(ruta)) return cifras(valor);
   switch (ruta) {
     case "catalogo.json": return catalogo(valor);
     case "territorio/departamentos.json": return lista(valor, departamento, 1);

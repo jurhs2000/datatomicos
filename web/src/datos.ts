@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { validarDatos } from "./validarDatos";
+import { cargarCifras, type CargaCifras } from "./cifras";
 
 // Tipos y carga de los archivos de public/datos/.
 // Los genera el pipeline (catálogo y territorio) y el notebook del IPC; no se editan a mano.
@@ -147,6 +148,42 @@ export interface Poblacion {
   municipios: Record<string, number[]>;
 }
 
+export interface KpiCifra {
+  id: string;
+  nombre: string;
+  unidad: string;
+  tipo: "conteo" | "porcentaje" | "tasa";
+}
+
+export interface FilaCifra {
+  kpi: string;
+  nivel: "pais" | "departamento" | "municipio";
+  territorio: number;
+  anio: number;
+  valor: number;
+  numerador?: number;
+  denominador?: number;
+}
+
+/** Contrato común de los productos preparados por el pipeline. */
+export interface ProductoCifras {
+  orden: number;
+  producto: string;
+  titulo_catalogo: string;
+  operacion: string;
+  operacion_nombre: string;
+  edicion: string | null;
+  url: string;
+  titulo: string;
+  fuente: string;
+  fecha_descarga: string;
+  nota: string;
+  nivel_minimo: FilaCifra["nivel"];
+  anios: number[];
+  kpis: KpiCifra[];
+  filas: FilaCifra[];
+}
+
 export interface Coeficientes {
   anio_precios: number;
   departamentos: { codigo: number; nombre: string; coeficiente: number; observaciones: number }[];
@@ -204,6 +241,27 @@ export async function leerJson<T = unknown>(url: string): Promise<T | null> {
   } catch {
     return null;
   }
+}
+
+/** Descubre los productos sin conocer sus nombres y conserva el orden del índice. */
+export function useCifras() {
+  const [estado, setEstado] = useState<Estado<CargaCifras>>({ cargando: true });
+  const [intento, setIntento] = useState(0);
+  useEffect(() => {
+    let vigente = true;
+    async function cargar() {
+      try {
+        const datos = await cargarCifras(leerJson);
+        if (vigente) setEstado({ cargando: false, datos });
+      } catch (error) {
+        if (vigente) setEstado({ cargando: false, error: error instanceof Error ? error.message : "No se pudieron cargar las cifras adicionales." });
+      }
+    }
+    setEstado({ cargando: true });
+    void cargar();
+    return () => { vigente = false; };
+  }, [intento]);
+  return { estado, reintentar: () => setIntento((i) => i + 1) };
 }
 
 /** Carga un JSON de public/datos/. La ruta es relativa para que funcione en cualquier subcarpeta. */

@@ -4,6 +4,8 @@ import { ErrorMapa } from "../componentes/ErrorMapa";
 import type { Origen } from "../componentes/TarjetaCifra";
 import { TarjetaPoblacion } from "../componentes/TarjetaPoblacion";
 import { TarjetaPrecios } from "../componentes/TarjetaPrecios";
+import { TarjetaProducto } from "../componentes/TarjetaProducto";
+import { avisoCifras } from "../cifras";
 import { enlace, reemplazarParametros, useUbicacion } from "../navegacion";
 import { useMunicipios } from "../territorio";
 import {
@@ -12,6 +14,7 @@ import {
   nombreLugar,
   textoPeriodo,
   useJson,
+  useCifras,
   type Catalogo,
   type Departamento,
   type Lugar,
@@ -88,6 +91,16 @@ function origenDeProducto(indice: Indice, producto: Publicacion | undefined, suf
 
 function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsBuscador) {
   const productos = catalogo.publicaciones;
+  const { estado: estadoCifras, reintentar: reintentarCifras } = useCifras();
+  const cifras = "datos" in estadoCifras ? estadoCifras.datos.productos : [];
+  const [seleccionCifras, setSeleccionCifras] = useState<Set<string>>(() => new Set());
+  const alternarCifras = (id: string) => setSeleccionCifras((anterior) => {
+    const siguiente = new Set(anterior);
+    if (siguiente.has(id)) siguiente.delete(id);
+    else siguiente.add(id);
+    return siguiente;
+  });
+  const controlesCifras = { productosConCifras: new Set(cifras.map((p) => p.producto)), seleccionCifras, alternarCifras };
   const indice = useMemo(() => indexar(catalogo), [catalogo]);
   const { parametros } = useUbicacion();
   const minimo = Math.min(...productos.map((p) => p.periodo_inicio));
@@ -177,7 +190,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
 
   // Primero los que tienen cifras en el Atlas; después, los más recientes.
   const ordenados = [...filtrados].sort(
-    (a, b) => Number(!!b.datos) - Number(!!a.datos) || b.periodo_fin - a.periodo_fin,
+    (a, b) => Number(!!b.datos || controlesCifras.productosConCifras.has(b.id)) - Number(!!a.datos || controlesCifras.productosConCifras.has(a.id)) || b.periodo_fin - a.periodo_fin,
   );
   const esNivel = (...niveles: NivelTerritorial[]) => (p: Publicacion) => niveles.includes(p.nivel_territorial_minimo);
   const grupos =
@@ -366,6 +379,17 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
               />
             )}
           </div>
+          {estadoCifras.cargando && <p className="nota" role="status">Cargando productos con cifras…</p>}
+          {"error" in estadoCifras && <p className="nota" role="status">{estadoCifras.error} <button type="button" className="boton-texto" onClick={reintentarCifras}>Reintentar cifras</button></p>}
+          {"datos" in estadoCifras && estadoCifras.datos.faltantes.length > 0 && <p className="nota" role="status">Algunos productos con cifras no se pudieron cargar o tienen un formato inválido. <button type="button" className="boton-texto" onClick={reintentarCifras}>Reintentar cifras</button></p>}
+          {!cifras.some((p) => seleccionCifras.has(p.producto)) && cifras.length > 0 && <p className="nota">{avisoCifras(cifras)}</p>}
+          <div className="productos-cifras">
+            {cifras.map((producto) => (
+              <div key={producto.producto} id={`cifras-${encodeURIComponent(producto.producto)}`} hidden={!seleccionCifras.has(producto.producto)}>
+                {seleccionCifras.has(producto.producto) && <TarjetaProducto producto={producto} lugar={lugar} desde={periodo.desde} hasta={periodo.hasta} />}
+              </div>
+            ))}
+          </div>
         </section>
 
         <section className="ficha-seccion">
@@ -399,12 +423,12 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
               </p>
             </>
           )}
-          <Lista productos={grupos.principales} depto={deptoParaEnlaces} indice={indice} />
+          <Lista productos={grupos.principales} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
           {grupos.departamentales.length > 0 && (
             <>
               <h4 className="grupo-titulo">Con cifras solo de {nombreDepartamento}</h4>
               <p className="nota">Publican cifras del departamento, pero no de cada municipio.</p>
-              <Lista productos={grupos.departamentales} depto={deptoParaEnlaces} indice={indice} />
+              <Lista productos={grupos.departamentales} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
             </>
           )}
           {grupos.agregados.length > 0 && (
@@ -414,7 +438,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
                 Incluyen a {lugar.nivel === "pais" ? "todo el país" : lugar.nombre}, pero no publican cifras propias
                 del {lugar.nivel === "municipio" ? "municipio" : "departamento"}.
               </p>
-              <Lista productos={grupos.agregados} depto={deptoParaEnlaces} indice={indice} />
+              <Lista productos={grupos.agregados} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
             </>
           )}
           {grupos.porConfirmar.length > 0 && (
@@ -424,7 +448,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
                 Todavía no se revisó si estos productos traen cifras por{" "}
                 {lugar.nivel === "municipio" ? "municipio" : "departamento"}.
               </p>
-              <Lista productos={grupos.porConfirmar} depto={deptoParaEnlaces} indice={indice} />
+              <Lista productos={grupos.porConfirmar} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
             </>
           )}
         </section>
@@ -433,7 +457,16 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
   );
 }
 
-function Lista({ productos, depto, indice }: { productos: Publicacion[]; depto: number | null; indice: Indice }) {
+interface PropsLista {
+  productos: Publicacion[];
+  depto: number | null;
+  indice: Indice;
+  productosConCifras: Set<string>;
+  seleccionCifras: Set<string>;
+  alternarCifras: (id: string) => void;
+}
+
+function Lista({ productos, depto, indice, productosConCifras, seleccionCifras, alternarCifras }: PropsLista) {
   if (productos.length === 0) return <p className="nota">Ningún producto coincide con los filtros.</p>;
   return (
     <ul className="lista-productos">
@@ -490,6 +523,11 @@ function Lista({ productos, depto, indice }: { productos: Publicacion[]; depto: 
               <p className="aviso-supuesto">El periodo o el nivel territorial se infirieron y falta verificarlos.</p>
             )}
             {p.datos === "poblacion" && <p className="nota">Sus cifras están arriba, en «En cifras».</p>}
+            {productosConCifras.has(p.id) && (
+              <button type="button" className="boton producto-ver-cifras" aria-label={`Ver cifras de ${p.titulo}`} aria-pressed={seleccionCifras.has(p.id)} aria-controls={`cifras-${encodeURIComponent(p.id)}`} onClick={() => alternarCifras(p.id)}>
+                Ver cifras
+              </button>
+            )}
             {p.datos === "ipc" && (
               <a className="boton" href={enlace("calculadora", { depto })}>
                 Abrir en la calculadora del IPC
