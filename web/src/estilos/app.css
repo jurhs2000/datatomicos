@@ -149,6 +149,16 @@ h3 {
   align-items: start;
 }
 
+@media (min-width: 52.001rem) {
+  .filtros {
+    position: sticky;
+    top: var(--ine-espacio-3);
+    max-height: calc(100vh - 2 * var(--ine-espacio-3));
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+  }
+}
+
 @media (max-width: 52rem) {
   .explorador {
     grid-template-columns: 1fr;
