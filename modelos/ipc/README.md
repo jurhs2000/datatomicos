@@ -58,14 +58,16 @@ En este ajuste, pasar de ausencia a presencia de El Niño se asocia con un nivel
 
 Las variables candidatas son población, El Niño, La Niña y cambio gubernamental. El modelo final conserva únicamente El Niño.
 
+Los enlaces, licencias y fechas de descarga de cada conjunto están en la sección «Datos utilizados» del [README principal](../../README.md#datos-utilizados).
+
 ### Archivos de entrada
 
-| Archivo | Columnas que espera el código |
-| --- | --- |
-| `ipc_emprepu_es25.xlsx` | `Año`, `Mes`, `Índice año   Base  2024=100.00 d/`, `cambio_gobierno`, `El Niño`, `La niña`, `Poblacion` |
-| `2023.xlsx` | `Año`, `Mes`, `Cod_Depto.`, `Nombre_depto.`, `Cod_artículo`, `Cantidad`, `Precio` |
+| Archivo | Columnas que espera el código | En el repositorio |
+| --- | --- | --- |
+| `modelos/ipc/insumos/ipc_mensual_variables_exogenas.csv` | `Año`, `Mes`, `v`, `cambio_gobierno`, `El Niño`, `La niña`, `Poblacion` | Sí (24 KB) |
+| `datos/crudos/precios_recolectados_2023.csv` | `Año`, `Mes`, `Cod_Depto.`, `Nombre_depto.`, `Cod_artículo`, `Cantidad`, `Precio` | No (70 MB); se genera con `preparar_insumos.py` |
 
-En el primer archivo, la columna `Índice año   Base  2024=100.00 d/` corresponde al IPC nacional (anteriormente identificada como `v`). Antes de ejecutar el notebook, se deben agregar al Excel las columnas de las variables exógenas (`cambio_gobierno`, `El Niño`, `La niña` y `Poblacion`), alineadas por año y mes, utilizando las fuentes indicadas en la tabla anterior y en los enlaces de consulta. Si el código todavía hace referencia a `v`, debe actualizarse para utilizar el encabezado real o renombrar explícitamente la columna durante la carga.
+En el primer archivo, la columna `v` corresponde al IPC nacional: en la publicación del INE se llama `Índice año   Base  2024=100.00 d/`. El archivo ya integra las variables exógenas (`cambio_gobierno`, `El Niño`, `La niña` y `Poblacion`), alineadas por año y mes con las fuentes indicadas en la tabla anterior.
 
 Para construir los indicadores de El Niño y La Niña se utiliza el índice ONI de NOAA–CPC con umbrales de **+0.5 °C** para El Niño y **−0.5 °C** para La Niña, respectivamente. La clasificación de episodios requiere que el umbral se mantenga durante **al menos cinco temporadas trimestrales móviles consecutivas**. Los indicadores se codifican como 1 cuando corresponde la fase y 0 en caso contrario, asignándolos a los meses según la clasificación temporal utilizada.
 
@@ -83,22 +85,24 @@ Fuentes de consulta:
 
 ### 1. Preparar el entorno
 
-Se necesita Python 3. En macOS o Linux, ejecutar desde la carpeta del proyecto:
+El entorno del proyecto se crea desde la raíz del repositorio con `environment.yml`, que incluye todas las dependencias del notebook (ver «Instalación y uso» en el [README principal](../../README.md#instalación-y-uso)):
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python3 -m pip install pandas numpy openpyxl matplotlib scipy statsmodels statsforecast ipywidgets jupyterlab
-python3 -m jupyterlab
+conda env create -f environment.yml
+conda activate series-tiempo-geo
 ```
 
-### 2. Preparar el notebook y los archivos
+### 2. Preparar los archivos y ejecutar el notebook
 
-1. Abrir el notebook original `.ipynb`. El archivo `SARIMAX y coeficientes departamentales (1).html` es una exportación de consulta: por sí solo no ejecuta nuevos pronósticos. Si solo se dispone del HTML, es necesario recuperar el notebook o copiar sus celdas a uno nuevo.
-2. Colocar ambos Excel en la carpeta de trabajo.
-3. En la celda de coeficientes, sustituir la ruta absoluta de precios por `pd.read_excel("2023.xlsx", engine="openpyxl")`.
-4. Añadir `import ipywidgets as widgets` a las importaciones. El código del panel usa ese nombre, pero la importación no aparece en la versión adjunta.
-5. Ejecutar las celdas en orden, desde las importaciones hasta el panel. La comparación inicial de modelos puede tardar.
+1. Desde la raíz del repositorio, generar los precios recolectados 2023:
+
+   ```bash
+   python modelos/ipc/preparar_insumos.py
+   ```
+
+   Descarga el archivo del portal del INE y lo guarda como CSV en `datos/crudos/`. Si ya se tiene `2023.xlsx`, `--xlsx RUTA` evita la descarga.
+2. Abrir `sarimax_coeficientes_departamentales.ipynb` desde cualquier carpeta del repositorio: las rutas se resuelven a partir de la raíz.
+3. Ejecutar las celdas en orden, desde las importaciones hasta la exportación final. La comparación inicial de modelos puede tardar (unos 4 minutos).
 
 ### 3. Generar un pronóstico
 
@@ -109,6 +113,18 @@ python3 -m jupyterlab
 Ejemplo: con datos hasta octubre de 2026, un horizonte de 6 meses y `1,2,3` genera un pronóstico de noviembre de 2026 a abril de 2027, con El Niño en noviembre, diciembre y enero.
 
 El panel muestra el pronóstico nacional, su intervalo nominal del 95 % y dos tablas. Las tablas incluyen los límites del 80 % y 95 %. La tabla departamental aplica los coeficientes al pronóstico y a sus límites; excluye departamentos sin coeficiente estimable. Para incorporar nuevos datos históricos, es necesario actualizar los archivos y volver a ejecutar las celdas.
+
+### 4. Exportación para el sitio web
+
+La última celda escribe en `web/public/datos/ipc/` los archivos que lee la sección del IPC del sitio. No cambia ningún resultado: solo guarda lo que calcularon las celdas anteriores.
+
+| Archivo | Contenido |
+| --- | --- |
+| `serie.json` | IPC mensual observado |
+| `validacion.json` | Modelo, periodos de entrenamiento y prueba, métricas, p-valor de Ljung–Box y pronóstico con intervalos para los 12 meses de prueba |
+| `coeficientes.json` | Coeficiente y número de observaciones por departamento |
+
+El pronóstico de meses futuros que genera el panel todavía no se exporta al sitio.
 
 ## Limitaciones y posibles mejoras
 

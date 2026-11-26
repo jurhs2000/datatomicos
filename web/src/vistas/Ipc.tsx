@@ -101,7 +101,10 @@ function Validado({ serie, validacion }: { serie: PuntoSerie[]; validacion: Vali
         Modelo: {validacion.modelo}. La proyección hacia los próximos meses está pendiente: requiere valores futuros de
         la variable El Niño.
       </p>
-      <p className="fuente">Fuente: INE, Empalme del IPC por República. Pronóstico e intervalos: cálculo del equipo.</p>
+      <p className="fuente">
+        Fuente: INE, Empalme del IPC por República; NOAA–CPC, Oceanic Niño Index (El Niño). Pronóstico e intervalos:
+        cálculo del equipo.
+      </p>
     </section>
   );
 }

@@ -89,6 +89,7 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 | [Precios recolectados del Índice de Precios al Consumidor](https://datos.ine.gob.gt/dataset/precios-recolectados-indice-de-precios-al-consumidor/resource/c5942f26-de9e-4b08-8232-df9dcafa819d) | Departamento de Estadísticas de Precios, INE | Open Data Commons Attribution License | Estimación del nivel de precios relativo por departamento | 2026-11-23 |
 | [Estimaciones y proyecciones de la población total por municipio, 2015-2030](https://datos.ine.gob.gt/dataset/proyecciones-de-poblacion-2015-2030) | Dirección de Censos y Encuestas, INE | No declarada en el portal | Población por departamento y municipio en el explorador | 2026-11-25 |
 | [Empalme del IPC por República, Base Anual 2024 = 100.00](https://datos.ine.gob.gt/dataset/ipc-por-producto-ano-2024-100-0/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910) | Departamento de Estadísticas de Precios, INE | Creative Commons Attribution | Serie histórica del IPC para la proyección | 2026-11-23 |
+| [Estimaciones y proyecciones de población nacionales 1950-2050](https://www.ine.gob.gt/proyecciones/) | Dirección de Censos y Encuestas, INE | No declarada (publicada en www.ine.gob.gt, fuera del portal de datos abiertos) | Variable externa candidata del modelo del IPC; no quedó en el modelo final | 2026-11-25 |
 
 **Catálogo:** las 146 publicaciones del catálogo (`catalogo/publicaciones.csv`) se registraron consultando la API de `datos.ine.gob.gt` y las páginas de `www.ine.gob.gt` el 2026-11-25. Cada una enlaza a su fuente original.
 
@@ -97,18 +98,21 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 | Conjunto de datos | Producido por | Licencia | Uso en el proyecto | Fecha de descarga |
 |---|---|---|---|---|
 | [Guatemala - Subnational Administrative Boundaries (COD-AB)](https://data.humdata.org/dataset/cod-ab-gtm) | CONRED, publicado por OCHA en HDX | CC BY-IGO | Límites de departamentos y municipios del mapa | 2026-11-25 |
+| [Oceanic Niño Index (ONI), ERSSTv6](https://www.cpc.ncep.noaa.gov/products/analysis_monitoring/enso/oni/v6/) | Climate Prediction Center (CPC), NOAA | Dominio público | Indicadores de El Niño y La Niña, variables externas del modelo del IPC | 2026-11-25 |
 
-Las variables externas del modelo de proyección (El Niño, La Niña, cambio de gobierno y población) tienen fuentes *pendientes de documentar*.
+**Elaboración propia:** la variable de cambio de gobierno marca el mes en que asumió cada presidente de Guatemala desde 1983, a partir de las fechas históricas de toma de posesión.
+
+El detalle de cómo se construye cada variable externa está en [`modelos/ipc/README.md`](modelos/ipc/README.md).
 
 ## Metodología y rigor
 
 - Se usan únicamente datos publicados por el INE en su portal, con las definiciones y metadatos oficiales.
 - Cada publicación muestra su periodo de referencia o versión metodológica.
-- **Proyección del IPC:** modelo SARIMAX entrenado sobre la serie mensual del IPC nacional, con el fenómeno de El Niño como variable externa. Se evaluó fuera de muestra sobre los últimos 12 meses disponibles (noviembre 2025 a octubre 2026), con un error porcentual absoluto medio (MAPE) de 0.62 %.
+- **Proyección del IPC:** modelo SARIMAX entrenado sobre la serie mensual del IPC nacional, con el fenómeno de El Niño como variable externa. Se evaluó fuera de muestra sobre los últimos 12 meses disponibles (noviembre 2025 a octubre 2026), con un error porcentual absoluto medio (MAPE) de 0.62 %. En el modelo final, la presencia de El Niño se asocia con un nivel del IPC aproximadamente 0.15 % mayor; es una asociación estimada, no un efecto causal. Como los valores futuros de El Niño no se conocen, el pronóstico hacia adelante se calcula por escenarios: se indica en qué meses se espera el fenómeno.
 - **Estimación departamental:** coeficientes de nivel de precios relativo por departamento, calculados a partir de los precios recolectados para el IPC en 2023, comparando el mismo artículo, en la misma presentación y el mismo mes entre departamentos. El INE publica el IPC a nivel nacional y por región; estos coeficientes son una estimación del equipo y no sustituyen una cifra oficial.
 - La herramienta no intenta identificar personas, hogares ni empresas, y solo trabaja con datos agregados publicados.
 
-<!-- Pendiente: detalle del modelo, validación y supuestos sobre las variables externas. -->
+El detalle del modelo, su validación y los supuestos sobre las variables externas están en [`modelos/ipc/README.md`](modelos/ipc/README.md).
 
 ## Limitaciones y posibles mejoras
 
@@ -118,6 +122,8 @@ Las variables externas del modelo de proyección (El Niño, La Niña, cambio de 
 - **Nivel territorial.** El mapa llega a municipio. Los datos por lugar poblado del Censo 2018 podrían mostrarse como tabla al seleccionar un municipio.
 - **Solo datos publicados.** No se usan datos de etapas de procesamiento previas a la publicación en el portal.
 - **Proyección solo del IPC.** Es la serie publicada con la longitud y la frecuencia necesarias para un modelo de pronóstico.
+- **Horizonte del pronóstico.** Usar El Niño como variable externa mejora el ajuste, pero el horizonte confiable depende de las perspectivas climáticas disponibles (por ejemplo, las de INSIVUMEH). Para horizontes más largos conviene comparar varios escenarios y actualizar el pronóstico con cada nueva perspectiva.
+- **Estimación departamental.** Los coeficientes de 2023 son constantes: cambian el nivel de cada departamento, pero todos conservan la variación porcentual nacional. El resultado no es un IPC departamental oficial ni el costo monetario de una canasta. Una mejora es actualizar los coeficientes y evaluar modelos territoriales con series y ponderaciones apropiadas.
 
 *Se completará al cerrar el desarrollo.*
 
@@ -141,6 +147,7 @@ El proyecto no usa servicios de pago. El sitio es estático y no necesita servid
 | statsmodels | Diagnóstico de series de tiempo | BSD-3-Clause |
 | StatsForecast | Modelos ARIMA y SARIMAX | Apache-2.0 |
 | Matplotlib | Gráficas del análisis | Matplotlib License (basada en PSF) |
+| ipywidgets | Panel interactivo de pronóstico en el notebook | BSD-3-Clause |
 | openpyxl | Lectura de archivos Excel | MIT |
 | requests, geopandas, pyarrow | Descarga y procesamiento de datos geográficos | Apache-2.0, BSD-3-Clause, Apache-2.0 |
 | React | Interfaz del sitio | MIT |
