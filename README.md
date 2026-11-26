@@ -2,7 +2,7 @@
 
 **Guatemala en datos.** Propuesta del equipo Datatómicos para el **Datatón INE 2026**, categoría Tecnológica y ciencias de datos.
 
-**Sitio:** [jurhs2000.github.io/datatomicos](https://jurhs2000.github.io/datatomicos/) · **Presentación:** [PDF](docs/presentacion.pdf) · **Video demostrativo:** [2 a 3 minutos](PENDIENTE-ENLACE-VIDEO)
+**Sitio:** [jurhs2000.github.io/datatomicos](https://jurhs2000.github.io/datatomicos/) · **Presentación:** [PDF](docs/presentacion.pdf) · **Video demostrativo:** [2 a 3 minutos, en Google Drive](https://drive.google.com/drive/folders/1KrfN_Ykt-Md7cNAFOineb5tRhYQ1Jxt8?usp=sharing)
 
 Elige un lugar de Guatemala y un periodo, y Atlas INE reúne lo que el INE ha medido ahí: las cifras, de dónde sale cada una y hacia dónde van.
 
