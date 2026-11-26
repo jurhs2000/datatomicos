@@ -62,7 +62,11 @@ function Operaciones({ catalogo }: { catalogo: Catalogo }) {
 
   const elegir = (id: string) => {
     setElegida(id);
-    document.getElementById("operacion-detalle")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const detalle = document.getElementById("operacion-detalle");
+    const posicion = detalle?.getBoundingClientRect();
+    if (posicion && (posicion.top < 0 || posicion.top >= window.innerHeight)) {
+      detalle?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   };
 
   return (
