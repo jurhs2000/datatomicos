@@ -71,6 +71,19 @@ function Operaciones({ catalogo }: { catalogo: Catalogo }) {
 
   return (
     <div className="origen-cuerpo">
+      <div className="origen-selector">
+        <label htmlFor="operacion-selector">Operación estadística</label>
+        <select id="operacion-selector" value={elegida} onChange={(evento) => elegir(evento.target.value)}>
+          {TIPOS_OPERACION.map((tipo) => (
+            <optgroup key={tipo} label={NOMBRE_TIPO[tipo].plural}>
+              {catalogo.operaciones
+                .filter((o) => o.tipo_operacion === tipo)
+                .sort((a, b) => nombreCorto(a).localeCompare(nombreCorto(b), "es"))
+                .map((o) => <option key={o.id} value={o.id}>{nombreCorto(o)}</option>)}
+            </optgroup>
+          ))}
+        </select>
+      </div>
       <nav className="origen-lista" aria-label="Operaciones estadísticas por tipo">
         {TIPOS_OPERACION.map((tipo) => {
           const operaciones = catalogo.operaciones

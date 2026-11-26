@@ -783,6 +783,10 @@ h3 {
   margin-top: var(--ine-espacio-5);
 }
 
+.origen-selector {
+  display: none;
+}
+
 @media (min-width: 52.001rem) {
   .origen-lista {
     position: sticky;
@@ -796,6 +800,47 @@ h3 {
 @media (max-width: 52rem) {
   .origen-cuerpo {
     grid-template-columns: 1fr;
+  }
+
+  .origen-lista {
+    display: none;
+  }
+
+  .origen-selector {
+    display: grid;
+    gap: var(--ine-espacio-2);
+  }
+
+  .origen-selector label {
+    font-weight: var(--ine-peso-semibold);
+  }
+
+  .origen-selector select {
+    width: 100%;
+    min-height: 44px;
+    padding: var(--ine-espacio-2);
+    border: 1px solid var(--ine-borde);
+    border-radius: var(--ine-radio-firma-sm) 0 0 0;
+    background: white;
+    color: var(--ine-texto);
+    font: inherit;
+  }
+}
+
+/* Flecha uniforme con espacio respecto al borde y al texto seleccionado. */
+.filtros select, .control select, .origen-selector select {
+  appearance: none;
+  padding-right: 2.75rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m3 6 5 5 5-5' fill='none' stroke='%23004080' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.475rem center;
+  background-size: 1rem;
+}
+
+@media (forced-colors: active) {
+  .filtros select, .control select, .origen-selector select {
+    appearance: auto;
+    background-image: none;
   }
 }
 
