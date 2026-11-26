@@ -820,16 +820,8 @@ h3 {
 }
 
 .origen-detalle {
-  position: sticky;
-  top: var(--ine-espacio-3);
   padding: var(--ine-espacio-4);
   border: 1px solid var(--ine-borde);
-}
-
-@media (max-width: 52rem) {
-  .origen-detalle {
-    position: static;
-  }
 }
 
 .origen-tipo {
