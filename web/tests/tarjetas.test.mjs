@@ -16,9 +16,32 @@ test("las tarjetas renderizan KPI, procedencia, cobertura y niveles con el mismo
   });
   try {
     const { TarjetaProducto } = await servidor.ssrLoadModule("/src/componentes/TarjetaProducto.tsx");
+    const { TarjetaCifra } = await servidor.ssrLoadModule("/src/componentes/TarjetaCifra.tsx");
+    const { NotasCifra } = await servidor.ssrLoadModule("/src/componentes/NotasCifra.tsx");
     const renderizar = (producto, lugar, desde, hasta) => renderToStaticMarkup(React.createElement(TarjetaProducto, { producto, lugar, desde, hasta }));
     const departamento = { nivel: "departamento", codigo: 8, nombre: "Totonicapán" };
     const municipio = { nivel: "municipio", codigo: 805, nombre: "Momostenango", departamento: { codigo: 8, nombre: "Totonicapán" } };
+
+    await t.test("las notas se comparten con la tarjeta base y se omiten si no hay aclaraciones", () => {
+      const html = renderToStaticMarkup(React.createElement(TarjetaCifra, {
+        titulo: "Cifra de prueba", cifra: "10", unidad: "registros", anio: 2025,
+        nota: "Esta cifra corresponde al departamento.", origen: { texto: "Fuente de prueba" },
+      }));
+      assert.match(html, /<aside class="notas-cifra" aria-label="Notas de lectura">/);
+      assert.match(html, /<li>Esta cifra corresponde al departamento\.<\/li>/);
+      assert.equal(renderToStaticMarkup(React.createElement(NotasCifra, { notas: [null, false, undefined, ""] })), "");
+    });
+
+    await t.test("distingue columnas anuales de proporciones y conserva sus denominadores", () => {
+      const html = renderizar(productoDePrueba(), municipio, 2022, 2025);
+      assert.match(html, /Columnas de Registros, Momostenango, en registros/);
+      assert.match(html, /El sombreado marca 2022–2025\. Año destacado: 2025\./);
+      assert.match(html, /Barra sobre una escala de 0 a 100 %/);
+      assert.match(html, /Base del porcentaje: 1 de 4 registros\./);
+      assert.match(html, /Ver evolución anual y datos: Porcentaje de prueba/);
+      assert.match(html, /<th scope="col">Numerador<\/th><th scope="col">Denominador<\/th>/);
+      assert.match(html, /<td>25.0<\/td><td>1<\/td><td>4<\/td>/);
+    });
 
     await t.test("un producto adicional muestra todos sus KPI, edición y alternativa tabular", () => {
       const producto = productoDePrueba();

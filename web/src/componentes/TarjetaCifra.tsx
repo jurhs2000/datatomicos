@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { NotasCifra } from "./NotasCifra";
 
 export interface Origen {
   /** De qué producto u operación sale la cifra, p. ej. «Proyecciones de población 2015–2030 · INE». */
@@ -40,7 +41,7 @@ export function TarjetaCifra({ titulo, cifra, unidad, anio, nota, estimacion, or
         {unidad && <span> {unidad}</span>}
         <span className="tarjeta-cifra-anio"> · {anio}</span>
       </p>
-      {nota && <p className="nota tarjeta-cifra-nota">{nota}</p>}
+      <NotasCifra notas={[nota]} />
       {children}
       <p className="fuente">
         Origen:{" "}

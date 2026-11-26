@@ -470,6 +470,47 @@ h3 {
   min-width: 0;
 }
 
+.producto-kpi-serie {
+  grid-column: 1 / -1;
+}
+
+.cifra-grafica-anual {
+  margin: var(--ine-espacio-2) 0;
+}
+
+.cifra-grafica-anual figcaption {
+  color: var(--ine-texto-secundario);
+  font-size: var(--ine-texto-sm);
+}
+
+.notas-cifra {
+  margin: var(--ine-espacio-2) 0;
+  padding: var(--ine-espacio-2) var(--ine-espacio-3);
+  border-left: 3px solid var(--ine-azul-oscuro);
+  color: var(--ine-texto-secundario);
+  font-size: var(--ine-texto-sm);
+}
+
+.notas-cifra-titulo {
+  margin: 0 0 var(--ine-espacio-1);
+  color: var(--ine-titulo);
+  font-weight: var(--ine-peso-semibold);
+}
+
+.notas-cifra ul {
+  margin: 0;
+  padding-left: var(--ine-espacio-3);
+}
+
+.notas-cifra li + li {
+  margin-top: var(--ine-espacio-1);
+}
+
+.producto-kpi .tabla-proyeccion {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
 .producto-kpi h5 {
   margin: var(--ine-espacio-2) 0;
   font-size: var(--ine-texto-md);
