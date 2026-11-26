@@ -11,3 +11,4 @@ Cada archivo documenta una decisión de diseño: el contexto, lo que se decidió
 | [0005](0005-datos-descargados-fuera-del-repositorio.md) | Los datos descargados no se versionan |
 | [0006](0006-el-sitio-lee-archivos-generados.md) | El sitio lee archivos generados y versionados |
 | [0007](0007-limites-territoriales.md) | Límites territoriales de HDX con los códigos del INE |
+| [0008](0008-operacion-edicion-y-publicacion.md) | El catálogo se organiza por operación, edición y publicación |
