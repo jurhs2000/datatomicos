@@ -1,10 +1,14 @@
-# Datatómicos
+# Atlas INE
 
-Proyecto del equipo Datatómicos para el **Datatón INE 2026**, categoría Tecnológica y ciencias de datos.
+**Guatemala en datos.** Propuesta del equipo Datatómicos para el **Datatón INE 2026**, categoría Tecnológica y ciencias de datos.
 
-El Instituto Nacional de Estadística (INE) publica encuestas, índices de precios, censos y registros administrativos que describen al país con mucho detalle. Cada publicación corresponde a un periodo y a un territorio, pero hoy esa información no está registrada de forma estructurada: para saber qué existe sobre un municipio en un rango de años hay que revisar publicación por publicación. Este proyecto organiza lo que el INE ya publica para que se pueda buscar **por dónde y por cuándo**, y para el IPC agrega una proyección a futuro.
+**Sitio:** [jurhs2000.github.io/datatomicos](https://jurhs2000.github.io/datatomicos/)
 
-> **Estado:** en desarrollo durante el Datatón (23 al 27 de noviembre de 2026).
+Elige un lugar de Guatemala y un periodo, y Atlas INE reúne lo que el INE ha medido ahí: las cifras, de dónde sale cada una y hacia dónde van.
+
+El Instituto Nacional de Estadística (INE) publica censos, encuestas, índices de precios y registros administrativos, y casi todos describen un lugar y un periodo. Atlas INE organiza 146 productos del INE, de 41 operaciones estadísticas, para que se puedan consultar **por dónde y por cuándo**. Muestra las cifras de los que ya tienen datos procesados y, para el IPC, agrega una proyección a futuro.
+
+> **Estado:** versión entregada el 26 de noviembre de 2026, al cierre del desarrollo del Datatón. Funciona sobre una muestra de los datos; el catálogo y el proceso están pensados para incorporar el resto.
 
 ## Problema que resuelve
 
@@ -20,20 +24,26 @@ El Instituto Nacional de Estadística (INE) publica encuestas, índices de preci
 
 ## Qué hace
 
-### Explorador por tiempo y territorio
+El sitio tiene tres páginas.
 
-Un buscador de las publicaciones del INE con dos filtros combinables:
+### Explorar
 
-- **Tiempo:** una línea de tiempo en la que se elige un rango de años.
-- **Territorio:** un mapa en el que se selecciona un departamento o un municipio.
+Es la portada. Se elige un periodo en una barra de años y un lugar en el mapa, de departamento a municipio, y se puede filtrar por tema del portal y por origen (el tipo de operación y la operación estadística). El resultado es la ficha de ese lugar y ese periodo:
 
-El resultado es la lista de publicaciones disponibles para esa combinación, con su periodo, su nivel territorial, su base metodológica y el enlace a la fuente original.
+- **En cifras:** la población del departamento o municipio, según las proyecciones oficiales, y, con un departamento elegido, el nivel de precios estimado a partir del IPC.
+- **Lo que hay del INE:** los productos que cubren ese lugar y ese periodo, agrupados por nivel territorial. Cada uno dice de qué operación estadística y de qué edición sale, y enlaza a su página en el portal.
 
-### IPC con proyección
+La dirección de la página guarda la consulta, así que un enlace abre la misma ficha.
 
-El Índice de Precios al Consumidor publicado por el INE, junto con una proyección a 12 meses hecha con un modelo estadístico validado, sus intervalos de confianza y sus métricas de error. Incluye una estimación de cómo se ubica el nivel de precios de cada departamento respecto al promedio nacional.
+### Origen de los datos
 
-La proyección y la estimación departamental **son cálculos del equipo, no cifras oficiales del INE**, y así se identifican en la herramienta (ver [Metodología y rigor](#metodología-y-rigor)).
+Las operaciones estadísticas del INE, agrupadas por tipo. Al elegir una se ven su descripción, sus ediciones, de qué otras usa insumos y cuáles se alimentan de ella. Por ejemplo, la ENIGH da los ponderadores del IPC y sostiene la Canasta Básica Alimentaria y un indicador ODS.
+
+### Calculadora del IPC
+
+Proyecta el Índice de Precios al Consumidor hasta 24 meses, con sus intervalos y sus métricas de validación, ajustado al nivel de precios de cada departamento. Se puede indicar en qué meses se espera un fenómeno de El Niño.
+
+La proyección y el ajuste departamental **son cálculos del equipo, no cifras oficiales del INE**, y así se identifican en la herramienta (ver [Metodología y rigor](#metodología-y-rigor)).
 
 ## Arquitectura
 
@@ -41,7 +51,7 @@ El detalle está en [docs/arquitectura.md](docs/arquitectura.md) y las decisione
 
 Principios que guían el diseño:
 
-- **Un catálogo de publicaciones como pieza central.** Cada publicación del INE se describe con el mismo esquema: periodo, nivel territorial, base metodológica, fuente y fecha de descarga. La interfaz lee el catálogo, de modo que agregar una publicación es agregar una entrada y no modificar código.
+- **Un catálogo como pieza central.** Cada producto del INE se describe con el mismo esquema (periodo, nivel territorial, operación estadística, edición, fuente y fecha de consulta) y se organiza en operación › edición › producto. La interfaz lee el catálogo, así que agregar un producto es agregar una fila y no modificar código.
 - **Datos separados de la interfaz.** El procesamiento de datos genera archivos que la interfaz consume; cada parte se puede actualizar por separado.
 - **Lo oficial y lo estimado, siempre distinguibles.** Los cálculos propios se identifican visualmente y se documenta su método.
 
@@ -49,7 +59,7 @@ Principios que guían el diseño:
 
 | Parte | Tecnologías |
 |---|---|
-| Sitio web (`web/`) | Sitio estático con Vite, React y TypeScript. Mapa con MapLibre GL JS y gráficas con Observable Plot. Sin servidor ni servicios de pago. |
+| Sitio web (`web/`) | Sitio estático con Vite, React y TypeScript. Mapa con MapLibre GL JS y gráficas con Observable Plot. Sin servidor ni servicios de pago; se publica en GitHub Pages. |
 | Datos (`catalogo/`, `pipeline/`) | Catálogo en CSV y scripts de Python que lo validan y generan los archivos JSON que lee el sitio. |
 | Modelo (`modelos/ipc/`) | Python: statsforecast y statsmodels para el modelo SARIMAX; pandas, NumPy y SciPy para los coeficientes departamentales. |
 
@@ -93,7 +103,7 @@ Todos los datos provienen del portal de datos abiertos del INE, salvo que se ind
 | [Empalme del IPC por República, Base Anual 2024 = 100.00](https://datos.ine.gob.gt/dataset/ipc-por-producto-ano-2024-100-0/resource/6b2cb40a-188c-47c9-9288-ba11c40b5910) | Departamento de Estadísticas de Precios, INE | Creative Commons Attribution | Serie histórica del IPC para la proyección | 2026-11-23 |
 | [Estimaciones y proyecciones de población nacionales 1950-2050](https://www.ine.gob.gt/proyecciones/) | Dirección de Censos y Encuestas, INE | No declarada (publicada en www.ine.gob.gt, fuera del portal de datos abiertos) | Variable externa candidata del modelo del IPC; no quedó en el modelo final | 2026-11-25 |
 
-**Catálogo:** las 146 publicaciones del catálogo (`catalogo/publicaciones.csv`) se registraron consultando la API de `datos.ine.gob.gt` y las páginas de `www.ine.gob.gt` el 2026-11-25. Cada una enlaza a su fuente original.
+**Catálogo:** los 146 productos (`catalogo/publicaciones.csv`) y las 41 operaciones estadísticas, con sus 48 ediciones y 26 relaciones (`catalogo/operaciones.csv`, `ediciones.csv` y `relaciones.csv`), se registraron consultando la API de `datos.ine.gob.gt` y las páginas de `www.ine.gob.gt` el 2026-11-25. Cada uno enlaza a su fuente original.
 
 **Fuentes complementarias:**
 
@@ -119,7 +129,8 @@ El detalle del modelo, su validación y los supuestos sobre las variables extern
 ## Limitaciones y posibles mejoras
 
 - **Muestra de datos.** La versión entregada funciona con una selección de publicaciones; el catálogo y el proceso están pensados para incorporar el resto.
-- **Catálogo.** 146 publicaciones; en 28 el nivel territorial está por confirmar y en algunas el periodo se infirió del título. El sitio las marca.
+- **Catálogo.** 146 productos; en 28 el nivel territorial está por confirmar, en algunos el periodo se infirió del título y en 41 el nivel de procesamiento es un supuesto. El sitio los marca.
+- **Relaciones entre operaciones.** Salen de leer metodologías y documentos del INE; 4 de las 26 están marcadas como probables, porque el documento las sugiere sin decirlo de forma explícita.
 - **Datos en el sitio.** Además del IPC, solo las proyecciones de población muestran cifras; el resto de publicaciones enlaza a su fuente.
 - **Nivel territorial.** El mapa llega a municipio. Los datos por lugar poblado del Censo 2018 podrían mostrarse como tabla al seleccionar un municipio.
 - **Solo datos publicados.** No se usan datos de etapas de procesamiento previas a la publicación en el portal.
@@ -127,17 +138,21 @@ El detalle del modelo, su validación y los supuestos sobre las variables extern
 - **Horizonte del pronóstico.** Usar El Niño como variable externa mejora el ajuste, pero el horizonte confiable depende de las perspectivas climáticas disponibles (por ejemplo, las de INSIVUMEH). Para horizontes más largos conviene comparar varios escenarios y actualizar el pronóstico con cada nueva perspectiva.
 - **Estimación departamental.** Los coeficientes de 2023 son constantes: cambian el nivel de cada departamento, pero todos conservan la variación porcentual nacional. El resultado no es un IPC departamental oficial ni el costo monetario de una canasta. Una mejora es actualizar los coeficientes y evaluar modelos territoriales con series y ponderaciones apropiadas.
 
-*Se completará al cerrar el desarrollo.*
-
 ## Uso de inteligencia artificial generativa
 
-El equipo usó agentes de Claude Code (Anthropic) y Codex (OpenAI) como asistentes para revisar los metadatos del portal de datos abiertos, redactar documentación y apoyar el desarrollo de código. Todo el código y la documentación fueron revisados por el equipo, que puede explicarlos y defenderlos.
+El equipo usó herramientas de IA generativa como asistentes durante el Datatón:
 
-*Se completará al cerrar el desarrollo.*
+- **Claude Code** (Anthropic, modelo Claude Opus 5.5, también con la extensión Claude in Chrome): consultó la API pública del portal de datos abiertos y leyó páginas del portal para armar el catálogo y la clasificación por operación estadística; escribió el pipeline de datos y buena parte del código del sitio; adaptó el notebook del modelo del IPC al repositorio y verificó sus resultados; redactó documentación, incluido este README, y apoyó la estructura y los textos de la presentación y del video.
+- **Codex** (OpenAI, modelo GPT-6.1 Terra): desarrollo y ajustes de la interfaz del sitio.
+- **Gamma**: diseño de la presentación en PDF a partir de los textos del equipo.
+
+El modelo del IPC lo desarrolló el equipo. De las 41 descripciones de operaciones de `catalogo/operaciones.csv`, las 32 marcadas como `propia` son resúmenes redactados con ayuda de IA y revisados por el equipo; las otras 9 citan el portal del INE.
+
+Las decisiones de diseño, de datos y de método las tomó el equipo. Todo el código y la documentación fueron revisados por el equipo, que puede explicarlos y defenderlos.
 
 ## Servicios de pago o en la nube
 
-El proyecto no usa servicios de pago. El sitio es estático y no necesita servidor; la tipografía se carga desde Google Fonts, que es gratuito.
+El proyecto no usa servicios de pago. El sitio es estático, no necesita servidor y se publica en GitHub Pages, que es gratuito; la tipografía se carga desde Google Fonts, también gratuito.
 
 ## Componentes de terceros
 
@@ -155,7 +170,7 @@ El proyecto no usa servicios de pago. El sitio es estático y no necesita servid
 | React | Interfaz del sitio | MIT |
 | Vite | Compilación del sitio | MIT |
 | TypeScript | Tipos del código del sitio | Apache-2.0 |
-| MapLibre GL JS | Mapa de departamentos | BSD-3-Clause |
+| MapLibre GL JS | Mapas de departamentos y municipios | BSD-3-Clause |
 | Observable Plot | Gráficas del IPC | ISC |
 | Ubuntu Sans (Google Fonts) | Tipografía | Ubuntu Font Licence |
 | Logotipo del INE (imagotipo horizontal a color) | Pie del sitio | Kit de diseño que el INE entregó a los participantes del Datatón INE 2026 para sus propuestas |
