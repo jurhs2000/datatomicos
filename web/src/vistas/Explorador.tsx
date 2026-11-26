@@ -324,7 +324,7 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
         </fieldset>
       </aside>
 
-      <article className="ficha" aria-live="polite">
+      <article className="ficha" aria-label="Resultados de la consulta" aria-live="polite" tabIndex={0}>
         <h2 className="ficha-titulo">
           {nombre}, <span className="ine-num sin-corte">{periodoTexto}</span>
         </h2>
