@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import * as Plot from "@observablehq/plot";
 import { Grafica } from "./Grafica";
-import { TarjetaCifra } from "./TarjetaCifra";
+import { TarjetaCifra, type Origen } from "./TarjetaCifra";
 import { colorToken } from "./colores";
 import { nombreLugar, type Lugar, type Poblacion } from "../datos";
 
@@ -10,6 +10,8 @@ interface Props {
   lugar: Lugar;
   desde: number;
   hasta: number;
+  /** Operación y edición del producto que da la cifra; si falta, se usa la fuente del archivo. */
+  origen?: Origen;
 }
 
 function serieDe(poblacion: Poblacion, lugar: Lugar): number[] | undefined {
@@ -19,7 +21,7 @@ function serieDe(poblacion: Poblacion, lugar: Lugar): number[] | undefined {
 }
 
 /** Población proyectada del lugar al final del periodo, con la serie completa y el periodo resaltado. */
-export function TarjetaPoblacion({ poblacion, lugar, desde, hasta }: Props) {
+export function TarjetaPoblacion({ poblacion, lugar, desde, hasta, origen }: Props) {
   const serie = serieDe(poblacion, lugar);
   const { anios } = poblacion;
   const primero = anios[0];
@@ -60,7 +62,7 @@ export function TarjetaPoblacion({ poblacion, lugar, desde, hasta }: Props) {
       unidad="habitantes"
       anio={anio}
       nota={anio !== hasta ? `La proyección cubre ${primero}–${ultimo}.` : undefined}
-      origen={{ texto: `Estimaciones y proyecciones de población ${primero}–${ultimo} · INE`, url: poblacion.url }}
+      origen={origen ?? { texto: `Estimaciones y proyecciones de población ${primero}–${ultimo} · INE`, url: poblacion.url }}
     >
       <Grafica dibujar={dibujar} etiqueta={`Población proyectada de ${nombre}, ${primero} a ${ultimo}`} />
     </TarjetaCifra>

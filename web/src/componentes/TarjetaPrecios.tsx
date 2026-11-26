@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { TarjetaCifra } from "./TarjetaCifra";
+import { TarjetaCifra, type Origen } from "./TarjetaCifra";
 import { enlace } from "../navegacion";
 import { useJson, type Coeficientes } from "../datos";
 import { proyectar, type Pronostico } from "../proyeccionIpc";
@@ -8,7 +8,7 @@ const HORIZONTE = 12;
 const SIN_EL_NINO = new Set<number>();
 
 /** IPC nacional proyectado a 12 meses y ajustado al nivel de precios de un departamento (estimación del equipo). */
-export function TarjetaPrecios({ departamento, nombre }: { departamento: number; nombre: string }) {
+export function TarjetaPrecios({ departamento, nombre, origen }: { departamento: number; nombre: string; origen?: Origen }) {
   const pronostico = useJson<Pronostico>("ipc/pronostico.json");
   const coeficientes = useJson<Coeficientes>("ipc/coeficientes.json");
 
@@ -32,7 +32,7 @@ export function TarjetaPrecios({ departamento, nombre }: { departamento: number;
       anio={mes}
       estimacion
       nota={`IPC nacional ajustado al nivel de precios de ${nombre} · estimación del equipo. Sin El Niño.`}
-      origen={{ texto: "IPC del INE, base 2024=100 · proyección y ajuste del equipo", url: "https://www.ine.gob.gt/indice-de-precios-al-consumidor/" }}
+      origen={origen ?? { texto: "IPC del INE, base 2024=100 · proyección y ajuste del equipo", url: "https://www.ine.gob.gt/indice-de-precios-al-consumidor/" }}
       accion={
         <a className="boton" href={enlace("calculadora", { depto: departamento })}>
           Abrir en la calculadora del IPC

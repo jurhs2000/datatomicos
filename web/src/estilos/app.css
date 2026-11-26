@@ -185,6 +185,23 @@ h3 {
   margin-bottom: var(--ine-espacio-3);
 }
 
+.filtros select + select {
+  margin-top: calc(-1 * var(--ine-espacio-2));
+}
+
+.filtro-nota {
+  margin: 0;
+  font-size: var(--ine-texto-sm);
+}
+
+.filtros-activos {
+  margin: 0 0 var(--ine-espacio-3);
+  padding: var(--ine-espacio-2) var(--ine-espacio-3);
+  background: var(--ine-gris-claro);
+  border-radius: var(--ine-radio-firma-sm) 0 0 0;
+  font-size: var(--ine-texto-sm);
+}
+
 .linea-tiempo-valores {
   display: flex;
   justify-content: space-between;
