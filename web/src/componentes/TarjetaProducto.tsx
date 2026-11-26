@@ -12,12 +12,21 @@ interface Props {
   lugar: Lugar;
   desde: number;
   hasta: number;
+  onVerProducto?: (producto: string) => void;
 }
 
-export function TarjetaProducto({ producto, lugar, desde, hasta }: Props) {
+export function TarjetaProducto({ producto, lugar, desde, hasta, onVerProducto }: Props) {
   return (
     <article className="tarjeta-cifra tarjeta-producto ine-esquina-sm" aria-label={producto.titulo}>
       <header className="tarjeta-cifra-encabezado"><h4>{producto.titulo}</h4></header>
+      <p className="fuente">
+        Producto de origen:{" "}
+        {onVerProducto ? (
+          <button type="button" className="boton-texto" aria-label={`Ver ${producto.titulo_catalogo} en Productos`} aria-controls="ficha-productos" onClick={() => onVerProducto(producto.producto)}>
+            {producto.titulo_catalogo}
+          </button>
+        ) : producto.titulo_catalogo}
+      </p>
       <NotasCifra notas={[producto.nota]} />
       <div className="producto-kpis">
         {producto.kpis.map((kpi) => <BloqueKpi key={kpi.id} producto={producto} kpi={kpi} lugar={lugar} desde={desde} hasta={hasta} />)}

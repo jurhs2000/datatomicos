@@ -23,6 +23,16 @@ test("las tarjetas renderizan KPI, procedencia, cobertura y niveles con el mismo
     const departamento = { nivel: "departamento", codigo: 8, nombre: "Totonicapán" };
     const municipio = { nivel: "municipio", codigo: 805, nombre: "Momostenango", departamento: { codigo: 8, nombre: "Totonicapán" } };
 
+    await t.test("la tarjeta identifica y ofrece abrir su producto de origen dentro de la ficha", () => {
+      const producto = productoDePrueba();
+      const html = renderToStaticMarkup(React.createElement(TarjetaProducto, { producto, lugar: municipio, desde: 2022, hasta: 2025, onVerProducto: () => {} }));
+      assert.match(html, /Producto de origen:/);
+      assert.match(html, /aria-label="Ver PRODUCTO DE PRUEBA en Productos"/);
+      assert.match(html, /aria-controls="ficha-productos"/);
+      assert.match(html, />PRODUCTO DE PRUEBA<\/button>/);
+      assert.match(html, /href="https:\/\/datos.ine.gob.gt\/dataset\/producto-prueba"/);
+    });
+
     await t.test("la navegación identifica la vista y enlaza cada panel", () => {
       const html = renderToStaticMarkup(React.createElement(NavegacionFicha, { vista: "productos", total: 146, onCambio: () => {} }));
       assert.match(html, /aria-label="Vistas de la ficha"/);

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { iniciarFicha, reducirFicha } from "../src/ficha.ts";
+import { iniciarFicha, productoDeOrigenFueraDeConsulta, reducirFicha } from "../src/ficha.ts";
 
 test("Ver cifras desde la lista abre y solicita el enfoque sin desactivar al repetir", () => {
   let estado = reducirFicha(iniciarFicha(), { tipo: "vista", vista: "productos" });
@@ -23,6 +23,28 @@ test("alternar vistas mantiene varios productos elegidos", () => {
   assert.equal(estado.seleccion, seleccion);
   estado = reducirFicha(estado, { tipo: "vista", vista: "cifras" });
   assert.deepEqual([...estado.seleccion], ["primero", "segundo"]);
+});
+
+test("abrir el origen solicita el producto sin modificar las cifras seleccionadas", () => {
+  const anterior = reducirFicha(iniciarFicha(), { tipo: "abrir", producto: "primero" });
+  const estado = reducirFicha(anterior, { tipo: "origen", producto: "primero" });
+  assert.equal(estado.vista, "productos");
+  assert.equal(estado.destino, "primero");
+  assert.equal(estado.seleccion, anterior.seleccion);
+  assert.ok(estado.revision > anterior.revision);
+  const repetido = reducirFicha(estado, { tipo: "origen", producto: "primero" });
+  assert.ok(repetido.revision > estado.revision);
+});
+
+test("un origen filtrado se presenta aparte sin duplicar ni alterar la consulta", () => {
+  const productos = [{ id: "primero" }, { id: "segundo" }];
+  const filtrados = [productos[1]];
+  const estado = reducirFicha(iniciarFicha(), { tipo: "origen", producto: "primero" });
+  assert.equal(productoDeOrigenFueraDeConsulta(estado, productos, filtrados), productos[0]);
+  assert.deepEqual(filtrados, [productos[1]]);
+  assert.equal(productoDeOrigenFueraDeConsulta(estado, productos, productos), undefined);
+  assert.equal(productoDeOrigenFueraDeConsulta(iniciarFicha(), productos, filtrados), undefined);
+  assert.equal(productoDeOrigenFueraDeConsulta({ ...estado, destino: "ausente" }, productos, filtrados), undefined);
 });
 
 test("el selector puede quitar un producto conservando los demás y el estado anterior", () => {

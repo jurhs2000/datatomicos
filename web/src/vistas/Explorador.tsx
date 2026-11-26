@@ -6,7 +6,7 @@ import { TarjetaPoblacion } from "../componentes/TarjetaPoblacion";
 import { TarjetaPrecios } from "../componentes/TarjetaPrecios";
 import { TarjetaProducto } from "../componentes/TarjetaProducto";
 import { NavegacionFicha, SelectorCifras } from "../componentes/NavegacionFicha";
-import { iniciarFicha, reducirFicha, type VistaFicha } from "../ficha";
+import { iniciarFicha, productoDeOrigenFueraDeConsulta, reducirFicha, type VistaFicha } from "../ficha";
 import { avisoCifras } from "../cifras";
 import { enlace, reemplazarParametros, useUbicacion } from "../navegacion";
 import { useMunicipios } from "../territorio";
@@ -102,6 +102,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
   const panelProductos = useRef<HTMLElement>(null);
   const accesoFicha = useRef<HTMLDivElement>(null);
   const destinosCifras = useRef(new Map<string, HTMLDivElement>());
+  const destinosProductos = useRef(new Map<string, HTMLLIElement>());
   const posiciones = useRef<Partial<Record<VistaFicha, { panel: number; pagina: number }>>>({});
 
   const guardarPosicion = () => {
@@ -120,11 +121,20 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
     guardarPosicion();
     actualizarFicha({ tipo: "alternar", producto });
   };
-  const controlesCifras = { productosConCifras: new Set(cifras.map((p) => p.producto)), abrirCifras };
+  const abrirProducto = (producto: string) => {
+    guardarPosicion();
+    actualizarFicha({ tipo: "origen", producto });
+  };
+  const registrarProducto = (id: string, nodo: HTMLLIElement | null) => {
+    if (nodo) destinosProductos.current.set(id, nodo);
+    else destinosProductos.current.delete(id);
+  };
+  const controlesCifras = { productosConCifras: new Set(cifras.map((p) => p.producto)), abrirCifras, registrarProducto };
 
   useEffect(() => {
     if (!estadoFicha.revision || !ficha.current) return;
-    const tarjeta = estadoFicha.destino ? destinosCifras.current.get(estadoFicha.destino) : null;
+    const destinos = estadoFicha.vista === "cifras" ? destinosCifras.current : destinosProductos.current;
+    const tarjeta = estadoFicha.destino ? destinos.get(estadoFicha.destino) : null;
     const panel = estadoFicha.vista === "cifras" ? panelCifras.current : panelProductos.current;
     const objetivo = tarjeta ?? panel;
     if (!objetivo) return;
@@ -217,6 +227,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
   const pasaOrigen = (p: Publicacion) =>
     operacion !== null ? p.operacion === operacion : tipo === null || p.tipo_operacion === tipo;
   const filtrados = enPeriodo.filter((p) => pasaTema(p) && pasaOrigen(p));
+  const productoFueraConsulta = productoDeOrigenFueraDeConsulta(estadoFicha, productos, filtrados);
 
   const contar = (lista: Publicacion[], clave: (p: Publicacion) => string) => {
     const conteo = new Map<string, number>();
@@ -434,7 +445,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
           <div className="productos-cifras">
             {cifras.map((producto) => (
               <div key={producto.producto} id={`cifras-${encodeURIComponent(producto.producto)}`} hidden={!seleccionCifras.has(producto.producto)} tabIndex={-1} role="region" aria-label={`Cifras de ${producto.titulo}`} ref={(nodo) => { if (nodo) destinosCifras.current.set(producto.producto, nodo); else destinosCifras.current.delete(producto.producto); }}>
-                {seleccionCifras.has(producto.producto) && <TarjetaProducto producto={producto} lugar={lugar} desde={periodo.desde} hasta={periodo.hasta} />}
+                {seleccionCifras.has(producto.producto) && <TarjetaProducto producto={producto} lugar={lugar} desde={periodo.desde} hasta={periodo.hasta} onVerProducto={abrirProducto} />}
               </div>
             ))}
           </div>
@@ -442,6 +453,14 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
 
         <section ref={panelProductos} id="ficha-productos" className="ficha-seccion ficha-panel" hidden={estadoFicha.vista !== "productos"} aria-labelledby="ficha-productos-titulo" tabIndex={-1}>
           <h3 id="ficha-productos-titulo">Lo que hay del INE</h3>
+          {productoFueraConsulta && (
+            <section aria-label="Producto de origen fuera de la consulta">
+              <h4 className="grupo-titulo">Producto de origen de las cifras</h4>
+              <p className="nota" role="status">Este producto no coincide con el periodo o los filtros activos. Se muestra como origen de las cifras; la consulta y su conteo se conservan.</p>
+              <Lista productos={[productoFueraConsulta]} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
+            </section>
+          )}
+          {productoFueraConsulta && <h4 className="grupo-titulo">Productos que coinciden con la consulta</h4>}
           <p className="conteo">
             <strong className="ine-num">{total}</strong> {total === 1 ? "producto" : "productos"} del INE para{" "}
             {lugar.nivel === "pais" ? "todo el país" : nombre}, {periodoTexto}
@@ -511,17 +530,18 @@ interface PropsLista {
   indice: Indice;
   productosConCifras: Set<string>;
   abrirCifras: (id: string) => void;
+  registrarProducto: (id: string, nodo: HTMLLIElement | null) => void;
 }
 
-function Lista({ productos, depto, indice, productosConCifras, abrirCifras }: PropsLista) {
+function Lista({ productos, depto, indice, productosConCifras, abrirCifras, registrarProducto }: PropsLista) {
   if (productos.length === 0) return <p className="nota">Ningún producto coincide con los filtros.</p>;
   return (
     <ul className="lista-productos">
       {productos.map((p) => {
         const operacion = indice.operaciones.get(p.operacion);
         return (
-          <li key={p.id} className="producto ine-esquina-sm">
-            <h5>
+          <li key={p.id} id={`producto-${encodeURIComponent(p.id)}`} className="producto ine-esquina-sm" tabIndex={-1} aria-labelledby={`producto-titulo-${encodeURIComponent(p.id)}`} ref={(nodo) => registrarProducto(p.id, nodo)}>
+            <h5 id={`producto-titulo-${encodeURIComponent(p.id)}`}>
               <a href={p.url_publicacion} target="_blank" rel="noreferrer">
                 {p.titulo}
               </a>
