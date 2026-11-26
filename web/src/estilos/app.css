@@ -337,6 +337,10 @@ h3 {
   height: 18rem;
 }
 
+.mapa-centrar {
+  min-height: 44px;
+}
+
 /* En pantallas angostas, los dos mapas apilados no deben ocupar toda la pantalla. */
 @media (max-width: 52rem) {
   .mapa-lienzo {

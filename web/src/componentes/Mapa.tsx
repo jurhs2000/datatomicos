@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   Map as MapaLibre,
+  MercatorCoordinate,
   setWorkerUrl,
   type ExpressionSpecification,
   type GeoJSONSource,
@@ -24,7 +25,7 @@ interface Props {
 }
 
 /** Recorre las coordenadas de una geometría y devuelve su rectángulo envolvente. */
-function envolvente(coleccion: ColeccionLimites): LngLatBoundsLike {
+function envolvente(coleccion: ColeccionLimites): [number, number, number, number] {
   let [oeste, sur, este, norte] = [Infinity, Infinity, -Infinity, -Infinity];
   const recorrer = (c: unknown): void => {
     if (Array.isArray(c) && typeof c[0] === "number") {
@@ -46,13 +47,17 @@ function envolvente(coleccion: ColeccionLimites): LngLatBoundsLike {
 export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }: Props) {
   const contenedor = useRef<HTMLDivElement>(null);
   const mapa = useRef<MapaLibre | null>(null);
+  const limitesVista = useRef<LngLatBoundsLike | null>(null);
   const seleccionInicial = useRef(seleccionado);
   const [sinLimites, setSinLimites] = useState(false);
+  const [listo, setListo] = useState(false);
 
   useEffect(() => {
     if (!contenedor.current) return;
     let vigente = true;
     setSinLimites(false);
+    setListo(false);
+    limitesVista.current = null;
     const m = new MapaLibre({
       container: contenedor.current,
       style: {
@@ -80,7 +85,42 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
       const limites = await pedido;
       if (!vigente || !limites) return;
       m.addSource("limites", { type: "geojson", data: limites, promoteId: "codigo", attribution: ATRIBUCION_LIMITES });
-      if (departamento !== undefined) m.fitBounds(envolvente(limites), { padding: 16, animate: false });
+      const [oeste, sur, este, norte] = envolvente(limites);
+      if (![oeste, sur, este, norte].every(Number.isFinite)) {
+        setSinLimites(true);
+        return;
+      }
+      const vista: LngLatBoundsLike = [oeste, sur, este, norte];
+      limitesVista.current = vista;
+      const ajustarLimites = () => {
+        const lienzo = m.getContainer();
+        const anchoPantalla = lienzo.clientWidth;
+        const altoPantalla = lienzo.clientHeight;
+        if (anchoPantalla <= 32 || altoPantalla <= 32) return;
+
+        const superior = MercatorCoordinate.fromLngLat([oeste, norte]);
+        const inferior = MercatorCoordinate.fromLngLat([este, sur]);
+        const ancho = inferior.x - superior.x;
+        const alto = inferior.y - superior.y;
+        const proporcion = anchoPantalla / altoPantalla;
+        // El límite debe contener también el espacio vacío del encuadre con padding.
+        const anchoEncuadre = Math.max(
+          ancho * anchoPantalla / (anchoPantalla - 32),
+          alto * altoPantalla / (altoPantalla - 32) * proporcion,
+        );
+        const margen = capa === "municipios" ? 1.5 : 1.1;
+        const anchoLimite = Math.max(ancho * margen, anchoEncuadre * 1.01);
+        const altoLimite = Math.max(alto * margen, anchoEncuadre / proporcion * 1.01);
+        const centroX = (superior.x + inferior.x) / 2;
+        const centroY = (superior.y + inferior.y) / 2;
+        const esquinaSuperior = new MercatorCoordinate(centroX - anchoLimite / 2, centroY - altoLimite / 2).toLngLat();
+        const esquinaInferior = new MercatorCoordinate(centroX + anchoLimite / 2, centroY + altoLimite / 2).toLngLat();
+        m.setMaxBounds([esquinaSuperior.lng, esquinaInferior.lat, esquinaInferior.lng, esquinaSuperior.lat]);
+      };
+      ajustarLimites();
+      m.on("resize", ajustarLimites);
+      m.fitBounds(vista, { padding: 16, animate: false });
+      setListo(true);
       const lago: ExpressionSpecification = ["==", ["%", ["get", "codigo"], 100], 0];
       m.addLayer({
         id: "relleno",
@@ -118,7 +158,7 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
       m.on("mouseleave", "relleno", () => (m.getCanvas().style.cursor = ""));
     });
 
-    return () => { vigente = false; m.remove(); };
+    return () => { vigente = false; mapa.current = null; m.remove(); };
     // El mapa se crea una vez por capa y departamento; onSeleccion es un setState del padre, que no cambia.
   }, [capa, departamento]);
 
@@ -139,6 +179,18 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
         className={capa === "municipios" ? "mapa-lienzo mapa-lienzo-municipios" : "mapa-lienzo"}
         aria-label={etiqueta}
       />
+      {listo && (
+        <button
+          type="button"
+          className="boton-texto mapa-centrar"
+          aria-label={`Centrar mapa ${capa === "municipios" ? "de municipios" : "de departamentos"}`}
+          onClick={() => {
+            if (limitesVista.current) mapa.current?.fitBounds(limitesVista.current, { padding: 16, bearing: 0, pitch: 0, animate: false });
+          }}
+        >
+          Centrar mapa
+        </button>
+      )}
       {sinLimites && (
         <p className="mapa-aviso">No se pudieron cargar los límites. <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>
       )}
