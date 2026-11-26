@@ -11,6 +11,9 @@ export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props)
   const amplitud = maximo - minimo;
   const inicio = amplitud ? ((desde - minimo) / amplitud) * 100 : 0;
   const fin = amplitud ? ((hasta - minimo) / amplitud) * 100 : 100;
+  const primerAnioFuturo = Math.max(minimo, new Date().getFullYear() + 1);
+  const hayFuturo = primerAnioFuturo <= maximo && amplitud > 0;
+  const inicioFuturo = ((primerAnioFuturo - minimo) / amplitud) * 100;
   return (
     <fieldset className="linea-tiempo">
       <legend>Periodo</legend>
@@ -21,6 +24,7 @@ export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props)
       <div className="linea-tiempo-control">
         <div className="linea-tiempo-pista" aria-hidden="true">
           <div className="linea-tiempo-seleccion" style={{ left: `${inicio}%`, right: `${100 - fin}%` }} />
+          {hayFuturo && <div className="linea-tiempo-futuro" style={{ left: `${inicioFuturo}%` }} />}
         </div>
         <input
           type="range"
@@ -42,6 +46,7 @@ export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props)
           onChange={(e) => onCambio(desde, Math.max(Number(e.target.value), desde))}
         />
       </div>
+      {hayFuturo && <p className="linea-tiempo-leyenda"><span aria-hidden="true" /> Años futuros: proyecciones</p>}
       <p className="nota">Se muestran publicaciones que cubren al menos un año del periodo seleccionado.</p>
     </fieldset>
   );

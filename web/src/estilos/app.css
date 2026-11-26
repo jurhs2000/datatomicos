@@ -233,6 +233,28 @@ h3 {
   background: var(--ine-azul-oscuro);
 }
 
+.linea-tiempo-futuro {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  background: repeating-linear-gradient(135deg, var(--ine-naranja-oscuro) 0 2px, var(--ine-naranja-claro) 2px 4px);
+}
+
+.linea-tiempo-leyenda {
+  display: flex;
+  align-items: center;
+  gap: var(--ine-espacio-2);
+  color: var(--ine-texto-secundario);
+  font-size: var(--ine-texto-sm);
+}
+
+.linea-tiempo-leyenda span {
+  flex: none;
+  width: 1.25rem;
+  height: 0.375rem;
+  background: repeating-linear-gradient(135deg, var(--ine-naranja-oscuro) 0 2px, var(--ine-naranja-claro) 2px 4px);
+}
+
 .filtros .linea-tiempo-control input[type="range"] {
   position: absolute;
   inset: 0;
