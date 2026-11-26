@@ -4,14 +4,14 @@ Guía para agentes de IA que trabajen en este repositorio.
 
 ## Proyecto
 
-Herramienta del equipo Datatómicos para el Datatón INE 2026 (categoría Tecnológica y ciencias de datos). Permite buscar las publicaciones del Instituto Nacional de Estadística (INE) de Guatemala por tiempo y territorio, e incluye el IPC con una proyección a futuro. El contexto completo para personas está en `README.md`.
+Herramienta del equipo Datatómicos para el Datatón INE 2026 (categoría Tecnológica y ciencias de datos). Atlas INE permite consultar las publicaciones del Instituto Nacional de Estadística (INE) de Guatemala por tiempo y territorio, con las cifras de los productos ya procesados, el origen de cada operación estadística y una proyección del IPC a futuro. El contexto completo para personas está en `README.md`.
 
 ## Estructura
 
 | Carpeta | Contenido |
 |---|---|
 | `catalogo/` | Metadatos de las publicaciones del INE; la interfaz lo lee |
-| `pipeline/` | Scripts que validan el catálogo y preparan límites y población para el sitio (ver `pipeline/README.md`) |
+| `pipeline/` | Scripts que validan el catálogo y preparan límites, población y cifras por territorio para el sitio (ver `pipeline/README.md`) |
 | `modelos/ipc/` | Proyección del IPC y coeficientes departamentales (notebook, insumos y script de preparación) |
 | `datos/` | Archivos locales; `datos/crudos/` no se versiona y se regenera con scripts |
 | `web/` | Sitio estático (Vite, React, TypeScript, MapLibre, Observable Plot); ver `web/README.md` |

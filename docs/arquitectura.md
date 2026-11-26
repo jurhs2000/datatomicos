@@ -1,12 +1,13 @@
 # Arquitectura
 
-> **Estado:** en desarrollo. Las tecnologías están en el [README](../README.md#tecnologías) y el formato de los archivos del sitio en [decisiones/0006](decisiones/0006-el-sitio-lee-archivos-generados.md).
+> **Estado:** versión entregada el 26 de noviembre de 2026. Las tecnologías están en el [README](../README.md#tecnologías) y el formato de los archivos del sitio en [decisiones/0006](decisiones/0006-el-sitio-lee-archivos-generados.md).
 
 ## Vista general
 
 ```mermaid
 flowchart LR
     P[Portal del INE<br>datos.ine.gob.gt] --> PL[pipeline/<br>descarga y normalización]
+    H[Límites territoriales<br>HDX, COD-AB] --> PL
     C[catalogo/<br>metadatos de cada publicación] --> PL
     PL --> D[Archivos para la interfaz]
     M[modelos/ipc/<br>proyección y coeficientes] --> D
@@ -21,7 +22,7 @@ Las piezas se comunican por archivos y cada una se puede actualizar sin tocar la
 | `pipeline/` | Descarga los datos del portal, los normaliza y produce los archivos que consume la interfaz. |
 | `modelos/` | Análisis estadístico. Hoy contiene la proyección del IPC y los coeficientes departamentales. |
 | `datos/` | Archivos de trabajo locales. Lo descargado no se versiona; se regenera con scripts. |
-| `web/` | El sitio: explorador por tiempo y territorio y sección del IPC. |
+| `web/` | El sitio, con tres páginas: Explorar (la ficha de un lugar y un periodo), Origen de los datos y Calculadora del IPC. |
 | `docs/` | Arquitectura y registro de decisiones. |
 
 ## Principios
@@ -31,9 +32,9 @@ Las piezas se comunican por archivos y cada una se puede actualizar sin tocar la
 - **Lo oficial y lo estimado, siempre distinguibles.** Toda cifra calculada por el equipo lleva su marca de estimación y su método.
 - **Sin servidores ni servicios de pago.** El sitio es estático; el procesamiento se hace antes de publicar.
 
-## Pendiente
+## Cómo crece
 
-- Mostrar los municipios en el mapa.
-- Agregar datos de más publicaciones del catálogo.
+- **Un producto nuevo en el catálogo** es una fila en `catalogo/publicaciones.csv`.
+- **Un producto con cifras por lugar y año** es un script de `pipeline/` que escribe el formato común de `web/public/datos/cifras/` ([pipeline/README.md](../pipeline/README.md#cifras-por-territorio)); el sitio lo muestra sin cambiar su código.
 
-Las decisiones tomadas están en [`decisiones/`](decisiones/).
+Las limitaciones y posibles mejoras están en el [README](../README.md#limitaciones-y-posibles-mejoras), y las decisiones tomadas, en [`decisiones/`](decisiones/).
