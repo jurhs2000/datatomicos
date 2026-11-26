@@ -36,7 +36,7 @@ export function Origen() {
       {catalogo.cargando ? (
         <p>Cargando el catálogo…</p>
       ) : "error" in catalogo ? (
-        <p className="error">{catalogo.error}</p>
+        <p className="error" role="alert">{catalogo.error} <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>
       ) : (
         <Operaciones catalogo={catalogo.datos} />
       )}

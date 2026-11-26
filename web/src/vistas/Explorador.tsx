@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { LineaDeTiempo } from "../componentes/LineaDeTiempo";
-import { Mapa } from "../componentes/Mapa";
+import { ErrorMapa } from "../componentes/ErrorMapa";
 import type { Origen } from "../componentes/TarjetaCifra";
 import { TarjetaPoblacion } from "../componentes/TarjetaPoblacion";
 import { TarjetaPrecios } from "../componentes/TarjetaPrecios";
@@ -33,6 +33,8 @@ import {
   type Indice,
 } from "../origen";
 
+const Mapa = lazy(() => import("../componentes/Mapa").then((m) => ({ default: m.Mapa })));
+
 /** Línea de valor de la portada. Provisional: se cambia aquí. */
 const LINEA_DE_VALOR = "Elige un lugar y un periodo para ver lo que el INE sabe de él y de dónde sale cada cifra.";
 
@@ -48,17 +50,18 @@ export function Explorador() {
         <p className="portada-subtitulo">Guatemala en datos</p>
         <p className="portada-valor">{LINEA_DE_VALOR}</p>
       </section>
-      {catalogo.cargando || departamentos.cargando || poblacion.cargando ? (
+      {catalogo.cargando || departamentos.cargando ? (
         <p>Cargando el catálogo…</p>
       ) : "error" in catalogo ? (
-        <p className="error">{catalogo.error}</p>
+        <p className="error" role="alert">{catalogo.error} <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>
       ) : "error" in departamentos ? (
-        <p className="error">{departamentos.error}</p>
+        <p className="error" role="alert">{departamentos.error} <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>
       ) : (
         <Buscador
           catalogo={catalogo.datos}
           departamentos={departamentos.datos}
           poblacion={"datos" in poblacion ? poblacion.datos : null}
+          errorPoblacion={"error" in poblacion}
         />
       )}
     </>
@@ -69,6 +72,7 @@ interface PropsBuscador {
   catalogo: Catalogo;
   departamentos: Departamento[];
   poblacion: Poblacion | null;
+  errorPoblacion: boolean;
 }
 
 /** Lee un número entero de la URL, o null si no está o no es válido. */
@@ -82,7 +86,7 @@ function origenDeProducto(indice: Indice, producto: Publicacion | undefined, suf
   return producto ? { texto: `${textoOrigen(indice, producto)} · ${sufijo}`, url: producto.url_publicacion } : undefined;
 }
 
-function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
+function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsBuscador) {
   const productos = catalogo.publicaciones;
   const indice = useMemo(() => indexar(catalogo), [catalogo]);
   const { parametros } = useUbicacion();
@@ -242,12 +246,16 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
               </option>
             ))}
           </select>
-          <Mapa
-            capa="departamentos"
-            seleccionado={departamento}
-            onSeleccion={elegirDepartamento}
-            etiqueta="Mapa de departamentos de Guatemala"
-          />
+          <ErrorMapa>
+            <Suspense fallback={<p role="status">Cargando el mapa de departamentos…</p>}>
+              <Mapa
+                capa="departamentos"
+                seleccionado={departamento}
+                onSeleccion={elegirDepartamento}
+                etiqueta="Mapa de departamentos de Guatemala"
+              />
+            </Suspense>
+          </ErrorMapa>
           {departamento !== null && (
             <div className="lugar-municipio">
               <select
@@ -263,14 +271,18 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
                   </option>
                 ))}
               </select>
-              <Mapa
-                key={departamento}
-                capa="municipios"
-                departamento={departamento}
-                seleccionado={municipio?.codigo ?? null}
-                onSeleccion={setMunicipio}
-                etiqueta={`Mapa de los municipios de ${nombreDepartamento}`}
-              />
+              <ErrorMapa>
+                <Suspense fallback={<p role="status">Cargando el mapa de municipios…</p>}>
+                  <Mapa
+                    key={departamento}
+                    capa="municipios"
+                    departamento={departamento}
+                    seleccionado={municipio?.codigo ?? null}
+                    onSeleccion={setMunicipio}
+                    etiqueta={`Mapa de los municipios de ${nombreDepartamento}`}
+                  />
+                </Suspense>
+              </ErrorMapa>
             </div>
           )}
         </fieldset>
@@ -331,6 +343,7 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
 
         <section className="ficha-seccion">
           <h3>En cifras</h3>
+          {errorPoblacion && <p role="status">No se pudo cargar la población. <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>}
           <div className="cifras">
             {poblacion && (
               <TarjetaPoblacion

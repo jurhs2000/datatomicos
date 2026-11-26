@@ -51,6 +51,8 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
 
   useEffect(() => {
     if (!contenedor.current) return;
+    let vigente = true;
+    setSinLimites(false);
     const m = new MapaLibre({
       container: contenedor.current,
       style: {
@@ -67,7 +69,7 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
     // Los límites se piden de inmediato, sin esperar al mapa, para avisar pronto si faltan.
     const pedido = cargarCapa(capa).then((limites) => {
       if (!limites) {
-        setSinLimites(true);
+        if (vigente) setSinLimites(true);
         return null;
       }
       if (departamento === undefined) return limites;
@@ -76,7 +78,7 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
 
     m.on("load", async () => {
       const limites = await pedido;
-      if (!limites) return;
+      if (!vigente || !limites) return;
       m.addSource("limites", { type: "geojson", data: limites, promoteId: "codigo", attribution: ATRIBUCION_LIMITES });
       if (departamento !== undefined) m.fitBounds(envolvente(limites), { padding: 16, animate: false });
       const lago: ExpressionSpecification = ["==", ["%", ["get", "codigo"], 100], 0];
@@ -116,7 +118,7 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
       m.on("mouseleave", "relleno", () => (m.getCanvas().style.cursor = ""));
     });
 
-    return () => m.remove();
+    return () => { vigente = false; m.remove(); };
     // El mapa se crea una vez por capa y departamento; onSeleccion es un setState del padre, que no cambia.
   }, [capa, departamento]);
 
@@ -138,7 +140,7 @@ export function Mapa({ capa, departamento, seleccionado, onSeleccion, etiqueta }
         aria-label={etiqueta}
       />
       {sinLimites && (
-        <p className="mapa-aviso">Los límites todavía no están cargados. Usa la lista para elegir.</p>
+        <p className="mapa-aviso">No se pudieron cargar los límites. <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>
       )}
     </div>
   );

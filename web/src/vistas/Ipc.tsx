@@ -27,7 +27,7 @@ export function Ipc() {
   if (serie.cargando || validacion.cargando || coeficientes.cargando || pronostico.cargando || departamentos.cargando)
     return <p>Cargando el IPC…</p>;
   for (const estado of [serie, validacion, coeficientes, pronostico, departamentos])
-    if ("error" in estado) return <p className="error">{estado.error}</p>;
+    if ("error" in estado) return <p className="error" role="alert">{estado.error} <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>;
   if (!("datos" in serie && "datos" in validacion && "datos" in coeficientes && "datos" in pronostico && "datos" in departamentos))
     return null;
 
@@ -218,6 +218,13 @@ function GraficaProyeccion({ serie, proyeccion }: { serie: PuntoSerie[]; proyecc
         <span className="leyenda-nino">Mes con El Niño</span>
       </div>
       <Grafica dibujar={dibujar} etiqueta="IPC publicado y proyección nacional del equipo" />
+      <details className="tabla-proyeccion">
+        <summary>Ver IPC publicado de los últimos 36 meses</summary>
+        <table><caption>IPC publicado por el INE</caption>
+          <thead><tr><th scope="col">Mes</th><th scope="col">IPC</th></tr></thead>
+          <tbody>{serie.slice(-36).map((p) => <tr key={p.fecha}><th scope="row">{mesAnio(p.fecha)}</th><td>{numero(p.ipc)}</td></tr>)}</tbody>
+        </table>
+      </details>
     </>
   );
 }
@@ -234,6 +241,7 @@ function TablaProyeccion({ nacional, ajustado, nombre }: { nacional: MesProyecta
             <th>El Niño</th>
             <th>IPC nacional</th>
             {nombre && <th>Ajustado a {nombre}</th>}
+            <th>Intervalo de 80 %</th>
             <th>Intervalo de 95 %</th>
           </tr>
         </thead>
@@ -244,6 +252,7 @@ function TablaProyeccion({ nacional, ajustado, nombre }: { nacional: MesProyecta
               <td>{m.nino ? "Sí" : "No"}</td>
               <td>{numero(nacional[i].pronostico)}</td>
               {nombre && <td>{numero(m.pronostico)}</td>}
+              <td>{numero(m.inferior_80)} a {numero(m.superior_80)}</td>
               <td>
                 {numero(m.inferior_95)} a {numero(m.superior_95)}
               </td>
@@ -325,6 +334,17 @@ function Validado({ serie, validacion }: { serie: PuntoSerie[]; validacion: Vali
         <span className="leyenda-estimado">Estimación del equipo, con intervalos de 80 % y 95 %</span>
       </div>
       <Grafica dibujar={dibujar} etiqueta="IPC observado y pronóstico del modelo en el periodo de prueba" />
+      <details className="tabla-proyeccion">
+        <summary>Ver datos de validación por mes</summary>
+        <table><caption>IPC publicado durante los últimos 48 meses mostrados</caption>
+          <thead><tr><th scope="col">Mes</th><th scope="col">IPC</th></tr></thead>
+          <tbody>{serie.slice(-48).map((p) => <tr key={p.fecha}><th scope="row">{mesAnio(p.fecha)}</th><td>{numero(p.ipc)}</td></tr>)}</tbody>
+        </table>
+        <table><caption>IPC observado y pronóstico en el periodo de prueba</caption>
+          <thead><tr><th scope="col">Mes</th><th scope="col">Observado</th><th scope="col">Pronóstico</th><th scope="col">Intervalo 80 %</th><th scope="col">Intervalo 95 %</th></tr></thead>
+          <tbody>{validacion.meses.map((m) => <tr key={m.fecha}><th scope="row">{mesAnio(m.fecha)}</th><td>{numero(m.observado)}</td><td>{numero(m.pronostico)}</td><td>{numero(m.inferior_80)} a {numero(m.superior_80)}</td><td>{numero(m.inferior_95)} a {numero(m.superior_95)}</td></tr>)}</tbody>
+        </table>
+      </details>
       <dl className="metricas ine-num">
         <div>
           <dt>Error porcentual medio (MAPE)</dt>
@@ -394,6 +414,13 @@ function Departamental({ coeficientes, departamentos }: { coeficientes: Coeficie
         departamentos. Es el factor que la calculadora aplica al IPC nacional.
       </p>
       <Grafica dibujar={dibujar} etiqueta="Coeficiente de nivel de precios relativo por departamento" />
+      <details className="tabla-proyeccion">
+        <summary>Ver coeficientes por departamento</summary>
+        <table><caption>Nivel de precios relativo estimado por departamento</caption>
+          <thead><tr><th scope="col">Departamento</th><th scope="col">Coeficiente</th><th scope="col">Precios comparados</th></tr></thead>
+          <tbody>{filas.map((f) => <tr key={f.codigo}><th scope="row">{f.nombre}</th><td>{numero(f.coeficiente, 3)}</td><td>{f.observaciones.toLocaleString("es-GT")}</td></tr>)}</tbody>
+        </table>
+      </details>
       <p className="fuente">
         Fuente: INE, Precios recolectados del IPC {coeficientes.anio_precios}. Coeficientes: cálculo del equipo.
       </p>

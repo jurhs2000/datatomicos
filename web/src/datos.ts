@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { validarDatos } from "./validarDatos";
 
 // Tipos y carga de los archivos de public/datos/.
 // Los genera el pipeline (catálogo y territorio) y el notebook del IPC; no se editan a mano.
@@ -197,7 +198,9 @@ export async function leerJson<T = unknown>(url: string): Promise<T | null> {
     const respuesta = await fetch(url);
     const tipo = respuesta.headers.get("content-type") ?? "";
     if (!respuesta.ok || tipo.includes("text/html")) return null;
-    return (await respuesta.json()) as T;
+    const datos: unknown = await respuesta.json();
+    const ruta = url.replace(/^\.\/datos\//, "");
+    return validarDatos(ruta, datos) ? datos as T : null;
   } catch {
     return null;
   }
@@ -210,7 +213,7 @@ export function useJson<T>(ruta: string): Estado<T> {
     let vigente = true;
     leerJson<T>(`./datos/${ruta}`).then((datos) => {
       if (!vigente) return;
-      setEstado(datos === null ? { cargando: false, error: `No se encontró datos/${ruta}` } : { cargando: false, datos });
+      setEstado(datos === null ? { cargando: false, error: `No se pudo cargar datos/${ruta} o tiene un formato inválido.` } : { cargando: false, datos });
     });
     return () => {
       vigente = false;

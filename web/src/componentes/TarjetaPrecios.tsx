@@ -27,6 +27,7 @@ export function TarjetaPrecios({ departamento, nombre, municipio, origen }: Prop
     return proyectar(pronostico.datos, HORIZONTE, SIN_EL_NINO, coeficiente)[HORIZONTE - 1];
   }, [pronostico, coeficientes, departamento]);
 
+  if ("error" in pronostico || "error" in coeficientes) return <p role="status">No se pudo cargar la proyección de precios. <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>;
   if (!final) return null;
   const mes = new Date(`${final.fecha}T00:00:00Z`)
     .toLocaleDateString("es-GT", { month: "short", year: "numeric", timeZone: "UTC" })

@@ -20,6 +20,7 @@ Requiere Node.js 20 o superior. Desde esta carpeta:
 ```bash
 npm install
 npm run dev       # servidor local en http://localhost:5173
+npm test          # verifica contratos de datos, enlaces y cálculo del IPC (Node.js 22.6 o superior)
 npm run build     # verifica tipos y genera dist/
 npm run preview   # sirve dist/ para revisarlo antes de publicar
 ```

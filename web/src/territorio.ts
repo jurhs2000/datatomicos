@@ -36,7 +36,13 @@ export const ATRIBUCION_LIMITES = "Límites: CONRED / OCHA (HDX), CC BY-IGO";
 const pedidos = new Map<Capa, Promise<ColeccionLimites | null>>();
 
 export function cargarCapa(capa: Capa): Promise<ColeccionLimites | null> {
-  if (!pedidos.has(capa)) pedidos.set(capa, leerJson<ColeccionLimites>(`./datos/territorio/${capa}.geojson`));
+  if (!pedidos.has(capa)) {
+    const pedido = leerJson<ColeccionLimites>(`./datos/territorio/${capa}.geojson`).then((resultado) => {
+      if (!resultado) pedidos.delete(capa);
+      return resultado;
+    });
+    pedidos.set(capa, pedido);
+  }
   return pedidos.get(capa)!;
 }
 

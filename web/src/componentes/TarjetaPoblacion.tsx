@@ -65,6 +65,13 @@ export function TarjetaPoblacion({ poblacion, lugar, desde, hasta, origen }: Pro
       origen={origen ?? { texto: `Estimaciones y proyecciones de población ${primero}–${ultimo} · INE`, url: poblacion.url }}
     >
       <Grafica dibujar={dibujar} etiqueta={`Población proyectada de ${nombre}, ${primero} a ${ultimo}`} />
+      <details className="tabla-proyeccion">
+        <summary>Ver datos de población por año</summary>
+        <table><caption>Población proyectada de {nombre}</caption>
+          <thead><tr><th scope="col">Año</th><th scope="col">Habitantes</th></tr></thead>
+          <tbody>{anios.map((a, i) => <tr key={a}><th scope="row">{a}</th><td>{serie[i]?.toLocaleString("es-GT") ?? "Sin dato"}</td></tr>)}</tbody>
+        </table>
+      </details>
     </TarjetaCifra>
   );
 }

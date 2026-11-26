@@ -9,7 +9,7 @@ const VISTAS: Record<Ruta, React.ComponentType> = {
 };
 
 export function App() {
-  const { ruta } = useUbicacion();
+  const { ruta, revision } = useUbicacion();
   const Vista = VISTAS[ruta];
 
   return (
@@ -34,7 +34,7 @@ export function App() {
 
       <main className="contenido">
         <Suspense fallback={<p>Cargando…</p>}>
-          <Vista />
+          <Vista key={`${ruta}-${revision}`} />
         </Suspense>
       </main>
 

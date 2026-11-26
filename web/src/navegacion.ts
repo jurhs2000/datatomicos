@@ -24,9 +24,11 @@ const ALIAS: Record<string, Ruta> = {
 export interface Ubicacion {
   ruta: Ruta;
   parametros: URLSearchParams;
+  /** Cambia en cada navegación externa, incluso si vuelve a la URL inicial. */
+  revision: number;
 }
 
-function leerUbicacion(): Ubicacion {
+function leerUbicacion(): Omit<Ubicacion, "revision"> {
   const [camino, consulta = ""] = (window.location.hash || "#/").split("?");
   const ruta =
     (Object.keys(RUTAS) as Ruta[]).find((r) => RUTAS[r].hash === camino) ?? ALIAS[camino] ?? "explorar";
@@ -55,14 +57,19 @@ export function reemplazarParametros(parametros: Record<string, Valor>): void {
   if (nuevo !== window.location.hash) window.history.replaceState(null, "", nuevo);
 }
 
+/** Distingue cada navegación externa aunque sus parámetros coincidan con los iniciales. */
+export function siguienteUbicacion(anterior: Ubicacion, nueva: Omit<Ubicacion, "revision">): Ubicacion {
+  return { ...nueva, revision: anterior.revision + 1 };
+}
+
 export function useUbicacion(): Ubicacion {
-  const [ubicacion, setUbicacion] = useState<Ubicacion>(leerUbicacion);
+  const [ubicacion, setUbicacion] = useState<Ubicacion>(() => ({ ...leerUbicacion(), revision: 0 }));
   useEffect(() => {
     const actualizar = () => {
       const nueva = leerUbicacion();
       setUbicacion((anterior) => {
         if (anterior.ruta !== nueva.ruta) window.scrollTo(0, 0);
-        return nueva;
+        return siguienteUbicacion(anterior, nueva);
       });
     };
     window.addEventListener("hashchange", actualizar);
