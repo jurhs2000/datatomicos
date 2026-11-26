@@ -5,13 +5,14 @@ import { useEffect, useState } from "react";
 
 export const RUTAS = {
   explorar: { hash: "#/", titulo: "Explorar" },
+  origen: { hash: "#/origen", titulo: "Origen de los datos" },
   calculadora: { hash: "#/calculadora", titulo: "Calculadora del IPC" },
 } as const;
 
 export type Ruta = keyof typeof RUTAS;
 
 /** Orden de las páginas en la navegación del encabezado. */
-export const NAVEGACION: Ruta[] = ["explorar", "calculadora"];
+export const NAVEGACION: Ruta[] = ["explorar", "origen", "calculadora"];
 
 /** Rutas anteriores que siguen funcionando: llevan a la página que las reemplazó. */
 const ALIAS: Record<string, Ruta> = {

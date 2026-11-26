@@ -4,6 +4,7 @@ import { NAVEGACION, RUTAS, useUbicacion, type Ruta } from "./navegacion";
 // Cada página (MapLibre en Explorar, Observable Plot en la calculadora) se carga al abrirla.
 const VISTAS: Record<Ruta, React.ComponentType> = {
   explorar: lazy(() => import("./vistas/Explorador").then((m) => ({ default: m.Explorador }))),
+  origen: lazy(() => import("./vistas/Origen").then((m) => ({ default: m.Origen }))),
   calculadora: lazy(() => import("./vistas/Ipc").then((m) => ({ default: m.Ipc }))),
 };
 
