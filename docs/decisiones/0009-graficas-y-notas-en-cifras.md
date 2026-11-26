@@ -1,7 +1,7 @@
 # 0009. Gráficas con escala y notas junto a las cifras
 
 - **Fecha:** 2026-11-26
-- **Estado:** propuesta en evaluación
+- **Estado:** aceptada
 
 ## Contexto
 
@@ -17,4 +17,4 @@ Las tendencias pequeñas sin eje vertical permiten reconocer la dirección de un
 
 ## Consecuencias
 
-La implementación usa Observable Plot y los tokens existentes. No introduce dependencias ni cambia las cifras o su agregación. La elección depende del tipo de indicador, por lo que un producto nuevo conserva la misma presentación. Se evaluará la propuesta visual antes de considerarla definitiva.
+La implementación usa Observable Plot y los tokens existentes. No introduce dependencias ni cambia las cifras o su agregación. La elección depende del tipo de indicador, por lo que un producto nuevo conserva la misma presentación. La propuesta visual fue revisada y aceptada.

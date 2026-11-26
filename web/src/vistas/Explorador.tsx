@@ -1,10 +1,12 @@
-import { lazy, Suspense, useEffect, useMemo, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { LineaDeTiempo } from "../componentes/LineaDeTiempo";
 import { ErrorMapa } from "../componentes/ErrorMapa";
 import type { Origen } from "../componentes/TarjetaCifra";
 import { TarjetaPoblacion } from "../componentes/TarjetaPoblacion";
 import { TarjetaPrecios } from "../componentes/TarjetaPrecios";
 import { TarjetaProducto } from "../componentes/TarjetaProducto";
+import { NavegacionFicha, SelectorCifras } from "../componentes/NavegacionFicha";
+import { iniciarFicha, reducirFicha, type VistaFicha } from "../ficha";
 import { avisoCifras } from "../cifras";
 import { enlace, reemplazarParametros, useUbicacion } from "../navegacion";
 import { useMunicipios } from "../territorio";
@@ -93,14 +95,56 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
   const productos = catalogo.publicaciones;
   const { estado: estadoCifras, reintentar: reintentarCifras } = useCifras();
   const cifras = "datos" in estadoCifras ? estadoCifras.datos.productos : [];
-  const [seleccionCifras, setSeleccionCifras] = useState<Set<string>>(() => new Set());
-  const alternarCifras = (id: string) => setSeleccionCifras((anterior) => {
-    const siguiente = new Set(anterior);
-    if (siguiente.has(id)) siguiente.delete(id);
-    else siguiente.add(id);
-    return siguiente;
-  });
-  const controlesCifras = { productosConCifras: new Set(cifras.map((p) => p.producto)), seleccionCifras, alternarCifras };
+  const [estadoFicha, actualizarFicha] = useReducer(reducirFicha, undefined, iniciarFicha);
+  const seleccionCifras = estadoFicha.seleccion;
+  const ficha = useRef<HTMLElement>(null);
+  const panelCifras = useRef<HTMLElement>(null);
+  const panelProductos = useRef<HTMLElement>(null);
+  const accesoFicha = useRef<HTMLDivElement>(null);
+  const destinosCifras = useRef(new Map<string, HTMLDivElement>());
+  const posiciones = useRef<Partial<Record<VistaFicha, { panel: number; pagina: number }>>>({});
+
+  const guardarPosicion = () => {
+    if (ficha.current) posiciones.current[estadoFicha.vista] = { panel: ficha.current.scrollTop, pagina: window.scrollY };
+  };
+  const cambiarVista = (vista: VistaFicha) => {
+    if (vista === estadoFicha.vista) return;
+    guardarPosicion();
+    actualizarFicha({ tipo: "vista", vista });
+  };
+  const abrirCifras = (producto: string) => {
+    guardarPosicion();
+    actualizarFicha({ tipo: "abrir", producto });
+  };
+  const alternarCifras = (producto: string) => {
+    guardarPosicion();
+    actualizarFicha({ tipo: "alternar", producto });
+  };
+  const controlesCifras = { productosConCifras: new Set(cifras.map((p) => p.producto)), abrirCifras };
+
+  useEffect(() => {
+    if (!estadoFicha.revision || !ficha.current) return;
+    const tarjeta = estadoFicha.destino ? destinosCifras.current.get(estadoFicha.destino) : null;
+    const panel = estadoFicha.vista === "cifras" ? panelCifras.current : panelProductos.current;
+    const objetivo = tarjeta ?? panel;
+    if (!objetivo) return;
+    objetivo.style.scrollMarginTop = `${(accesoFicha.current?.offsetHeight ?? 64) + 8}px`;
+    objetivo.focus({ preventScroll: true });
+    const posicion = posiciones.current[estadoFicha.vista];
+    const scrollPropio = getComputedStyle(ficha.current).overflowY === "auto";
+    if (tarjeta || !posicion) {
+      if (scrollPropio) {
+        // Desplaza solo los resultados para mantener los filtros en su sitio.
+        ficha.current.scrollTop += objetivo.getBoundingClientRect().top - ficha.current.getBoundingClientRect().top - (accesoFicha.current?.offsetHeight ?? 64) - 8;
+      } else {
+        objetivo.scrollIntoView({ block: "start", behavior: "auto" });
+      }
+    } else {
+      ficha.current.scrollTop = posicion.panel;
+      // En móvil se desplaza la página; en escritorio, la propia ficha.
+      if (!scrollPropio) window.scrollTo({ top: posicion.pagina, behavior: "auto" });
+    }
+  }, [estadoFicha.revision, estadoFicha.vista, estadoFicha.destino]);
   const indice = useMemo(() => indexar(catalogo), [catalogo]);
   const { parametros } = useUbicacion();
   const minimo = Math.min(...productos.map((p) => p.periodo_inicio));
@@ -349,16 +393,20 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
         </fieldset>
       </aside>
 
-      <article className="ficha" aria-label="Resultados de la consulta" tabIndex={0}>
+      <article ref={ficha} className="ficha" aria-label="Resultados de la consulta" tabIndex={0}>
         <p className="solo-lector" role="status" aria-atomic="true">
           {nombre}, {periodoTexto}: {total} {total === 1 ? "producto" : "productos"}.
         </p>
         <h2 className="ficha-titulo">
           {nombre}, <span className="ine-num sin-corte">{periodoTexto}</span>
         </h2>
+        <div ref={accesoFicha} className="ficha-acceso">
+          <NavegacionFicha vista={estadoFicha.vista} total={total} onCambio={cambiarVista} />
+        </div>
 
-        <section className="ficha-seccion">
-          <h3>En cifras</h3>
+        <section ref={panelCifras} id="ficha-cifras" className="ficha-seccion ficha-panel" hidden={estadoFicha.vista !== "cifras"} aria-labelledby="ficha-cifras-titulo" tabIndex={-1}>
+          <h3 id="ficha-cifras-titulo">En cifras</h3>
+          <SelectorCifras productos={cifras} seleccion={seleccionCifras} onAlternar={alternarCifras} />
           {errorPoblacion && <p role="status">No se pudo cargar la población. <button type="button" className="boton-texto" onClick={() => window.location.reload()}>Reintentar</button></p>}
           <div className="cifras">
             {poblacion && (
@@ -385,15 +433,15 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
           {!cifras.some((p) => seleccionCifras.has(p.producto)) && cifras.length > 0 && <p className="nota">{avisoCifras(cifras)}</p>}
           <div className="productos-cifras">
             {cifras.map((producto) => (
-              <div key={producto.producto} id={`cifras-${encodeURIComponent(producto.producto)}`} hidden={!seleccionCifras.has(producto.producto)}>
+              <div key={producto.producto} id={`cifras-${encodeURIComponent(producto.producto)}`} hidden={!seleccionCifras.has(producto.producto)} tabIndex={-1} role="region" aria-label={`Cifras de ${producto.titulo}`} ref={(nodo) => { if (nodo) destinosCifras.current.set(producto.producto, nodo); else destinosCifras.current.delete(producto.producto); }}>
                 {seleccionCifras.has(producto.producto) && <TarjetaProducto producto={producto} lugar={lugar} desde={periodo.desde} hasta={periodo.hasta} />}
               </div>
             ))}
           </div>
         </section>
 
-        <section className="ficha-seccion">
-          <h3>Lo que hay del INE</h3>
+        <section ref={panelProductos} id="ficha-productos" className="ficha-seccion ficha-panel" hidden={estadoFicha.vista !== "productos"} aria-labelledby="ficha-productos-titulo" tabIndex={-1}>
+          <h3 id="ficha-productos-titulo">Lo que hay del INE</h3>
           <p className="conteo">
             <strong className="ine-num">{total}</strong> {total === 1 ? "producto" : "productos"} del INE para{" "}
             {lugar.nivel === "pais" ? "todo el país" : nombre}, {periodoTexto}
@@ -462,11 +510,10 @@ interface PropsLista {
   depto: number | null;
   indice: Indice;
   productosConCifras: Set<string>;
-  seleccionCifras: Set<string>;
-  alternarCifras: (id: string) => void;
+  abrirCifras: (id: string) => void;
 }
 
-function Lista({ productos, depto, indice, productosConCifras, seleccionCifras, alternarCifras }: PropsLista) {
+function Lista({ productos, depto, indice, productosConCifras, abrirCifras }: PropsLista) {
   if (productos.length === 0) return <p className="nota">Ningún producto coincide con los filtros.</p>;
   return (
     <ul className="lista-productos">
@@ -524,7 +571,7 @@ function Lista({ productos, depto, indice, productosConCifras, seleccionCifras, 
             )}
             {p.datos === "poblacion" && <p className="nota">Sus cifras están arriba, en «En cifras».</p>}
             {productosConCifras.has(p.id) && (
-              <button type="button" className="boton producto-ver-cifras" aria-label={`Ver cifras de ${p.titulo}`} aria-pressed={seleccionCifras.has(p.id)} aria-controls={`cifras-${encodeURIComponent(p.id)}`} onClick={() => alternarCifras(p.id)}>
+              <button type="button" className="boton producto-ver-cifras" aria-label={`Ver cifras de ${p.titulo}`} aria-controls={`cifras-${encodeURIComponent(p.id)}`} onClick={() => abrirCifras(p.id)}>
                 Ver cifras
               </button>
             )}

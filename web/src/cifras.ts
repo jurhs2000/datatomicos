@@ -50,6 +50,6 @@ export function avisoCifras(productos: ProductoCifras[]): string {
   if (!productos.length) return "";
   const nombres = new Intl.ListFormat("es", { style: "long", type: "conjunction" }).format(productos.map((p) => p.titulo));
   return productos.length === 1
-    ? `${nombres} también tiene cifras: ábrelo con «Ver cifras» en la lista.`
-    : `${nombres} también tienen cifras: ábrelos con «Ver cifras» en la lista.`;
+    ? `${nombres} también tiene cifras: actívalas con el selector de esta sección.`
+    : `${nombres} también tienen cifras: actívalas con el selector de esta sección.`;
 }

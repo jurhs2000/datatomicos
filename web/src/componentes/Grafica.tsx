@@ -13,7 +13,10 @@ export function Grafica({ dibujar, etiqueta }: Props) {
   useEffect(() => {
     const nodo = contenedor.current;
     if (!nodo) return;
-    const pintar = () => nodo.replaceChildren(dibujar(nodo.clientWidth));
+    const pintar = () => {
+      // Una vista o un desplegable oculto no tiene ancho; se dibuja cuando vuelve a mostrarse.
+      if (nodo.clientWidth > 0) nodo.replaceChildren(dibujar(nodo.clientWidth));
+    };
     pintar();
     const observador = new ResizeObserver(pintar);
     observador.observe(nodo);

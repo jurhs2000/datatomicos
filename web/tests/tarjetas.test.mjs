@@ -18,9 +18,27 @@ test("las tarjetas renderizan KPI, procedencia, cobertura y niveles con el mismo
     const { TarjetaProducto } = await servidor.ssrLoadModule("/src/componentes/TarjetaProducto.tsx");
     const { TarjetaCifra } = await servidor.ssrLoadModule("/src/componentes/TarjetaCifra.tsx");
     const { NotasCifra } = await servidor.ssrLoadModule("/src/componentes/NotasCifra.tsx");
+    const { NavegacionFicha, SelectorCifras } = await servidor.ssrLoadModule("/src/componentes/NavegacionFicha.tsx");
     const renderizar = (producto, lugar, desde, hasta) => renderToStaticMarkup(React.createElement(TarjetaProducto, { producto, lugar, desde, hasta }));
     const departamento = { nivel: "departamento", codigo: 8, nombre: "Totonicapán" };
     const municipio = { nivel: "municipio", codigo: 805, nombre: "Momostenango", departamento: { codigo: 8, nombre: "Totonicapán" } };
+
+    await t.test("la navegación identifica la vista y enlaza cada panel", () => {
+      const html = renderToStaticMarkup(React.createElement(NavegacionFicha, { vista: "productos", total: 146, onCambio: () => {} }));
+      assert.match(html, /aria-label="Vistas de la ficha"/);
+      assert.match(html, /aria-pressed="false" aria-controls="ficha-cifras"/);
+      assert.match(html, /aria-pressed="true" aria-controls="ficha-productos"/);
+      assert.match(html, /\(146\)/);
+    });
+
+    await t.test("el selector ofrece productos desde sus datos sin recorrer el catálogo", () => {
+      const productos = [{ producto: "otro-producto", titulo: "Otra fuente de prueba" }];
+      const html = renderToStaticMarkup(React.createElement(SelectorCifras, { productos, seleccion: new Set(["otro-producto"]), onAlternar: () => {} }));
+      assert.match(html, /<legend>Mostrar cifras de<\/legend>/);
+      assert.match(html, /aria-pressed="true" aria-controls="cifras-otro-producto"/);
+      assert.match(html, /Otra fuente de prueba/);
+      assert.equal(renderToStaticMarkup(React.createElement(SelectorCifras, { productos: [], seleccion: new Set(), onAlternar: () => {} })), "");
+    });
 
     await t.test("las notas se comparten con la tarjeta base y se omiten si no hay aclaraciones", () => {
       const html = renderToStaticMarkup(React.createElement(TarjetaCifra, {
