@@ -1,0 +1,49 @@
+id,operacion,nombre,anio_inicio,anio_fin,base_metodologica,url_portal,url_metodologia,fecha_consulta,como_se_determino
+censo-2002,censo-poblacion-vivienda,XI Censo Nacional de Población y VI de Habitación 2002,2002,2002,,https://www.ine.gob.gt/censo-2002/,,2026-11-25,portal
+censo-2018,censo-poblacion-vivienda,XII Censo Nacional de Población y VII de Vivienda 2018,2018,2018,,https://censo2018.ine.gob.gt/,,2026-11-25,portal
+cnrh-2017-2018,cnrh,Censo Nacional del Recurso Humano 2017-2018,2017,2018,,https://www.ine.gob.gt/censo-nacional-de-recurso-humano/,,2026-11-25,portal
+encovi-2000,encovi,ENCOVI 2000,2000,2000,,https://datos.ine.gob.gt/dataset/encovi-2000-personas-02,,2026-11-25,catalogo
+encovi-2006,encovi,ENCOVI 2006,2006,2006,,https://datos.ine.gob.gt/dataset/encovi-2006,,2026-11-25,catalogo
+encovi-2011,encovi,ENCOVI 2011,2011,2011,,https://datos.ine.gob.gt/dataset/encovi-2011,,2026-11-25,catalogo
+encovi-2014,encovi,ENCOVI 2014,2014,2014,,https://datos.ine.gob.gt/dataset/encovi-2014,,2026-11-25,catalogo
+encovi-2023,encovi,ENCOVI 2023,2023,2023,,https://www.ine.gob.gt/pobreza-menu/,,2026-11-25,catalogo
+enei-2002,enei,ENEI 2002,2002,2002,,https://datos.ine.gob.gt/dataset/enei-2002,,2026-11-25,catalogo
+enei-2003,enei,ENEI 2003,2003,2003,,https://datos.ine.gob.gt/dataset/enei-2003,,2026-11-25,catalogo
+enei-2004,enei,ENEI 2004,2004,2004,,https://datos.ine.gob.gt/dataset/enei-2004,,2026-11-25,catalogo
+enei-2010,enei,ENEI 2010,2010,2010,,https://datos.ine.gob.gt/dataset/enei-2010,,2026-11-25,catalogo
+enei-2011,enei,ENEI 2011,2011,2011,,https://datos.ine.gob.gt/dataset/enei-2011,,2026-11-25,catalogo
+enei-2012,enei,ENEI 2012,2012,2012,,https://datos.ine.gob.gt/dataset/enei-2012,,2026-11-25,catalogo
+enei-2013,enei,ENEI 2013,2013,2013,,https://datos.ine.gob.gt/dataset/enei-2013,,2026-11-25,catalogo
+enei-2014,enei,ENEI 2014,2014,2014,,https://datos.ine.gob.gt/dataset/enei-2014,,2026-11-25,catalogo
+enei-2015,enei,ENEI 2015,2015,2015,,https://datos.ine.gob.gt/dataset/enei-2015,,2026-11-25,catalogo
+enei-2016,enei,ENEI 2016,2016,2016,,https://datos.ine.gob.gt/dataset/enei-2016,,2026-11-25,catalogo
+enei-2017,enei,ENEI 2017,2017,2017,,https://datos.ine.gob.gt/dataset/enei-2017,,2026-11-25,catalogo
+enei-2018,enei,ENEI 2018,2018,2018,,https://datos.ine.gob.gt/dataset/enei-2018,,2026-11-25,catalogo
+enei-2019,enei,ENEI 2019,2019,2019,,https://datos.ine.gob.gt/dataset/enei-2019,,2026-11-25,catalogo
+enei-2021,enei,ENEI 2021,2021,2021,,https://datos.ine.gob.gt/dataset/enei-2021,,2026-11-25,catalogo
+enei-2022,enei,ENEI 2022,2022,2022,,https://www.ine.gob.gt/encuesta-nacional-de-empleo-e-ingresos/,,2026-11-25,portal
+eneic-2024,eneic,ENEIC 2024,2024,2024,,https://www.ine.gob.gt/encuesta-nacional-de-empleo-e-ingresos/,,2026-11-25,portal
+eneic-2025,eneic,ENEIC 2025,2025,2025,,https://www.ine.gob.gt/encuesta-nacional-de-empleo-e-ingresos/,,2026-11-25,portal
+eneic-2026,eneic,ENEIC 2026,2026,2026,,https://www.ine.gob.gt/encuesta-nacional-de-empleo-e-ingresos/,,2026-11-25,portal
+enigh-2021-2022,enigh,ENIGH 2021-2022,2021,2022,,https://www.ine.gob.gt/enigh/,,2026-11-25,portal
+enaprom-2023,enaprom,ENAPROM 2023,2023,2023,,https://www.ine.gob.gt/enaprom/,,2026-11-25,portal
+enaprom-2025,enaprom,ENAPROM 2025,2025,2025,,https://www.ine.gob.gt/enaprom/,,2026-11-25,portal
+enifh-2025,enifh,ENIFH 2025,2025,2025,,https://www.ine.gob.gt/enifh/,,2026-11-25,portal
+endesa-2025,endesa,ENDESA 2025,2025,2025,,https://www.ine.gob.gt/endesa/,,2026-11-25,portal
+encabih-2023,encabih,ENCABIH 2023,2023,2023,,https://www.ine.gob.gt/encabih/,,2026-11-25,portal
+encasba-2019,encasba,ENCASBA 2019,2019,2019,,https://datos.ine.gob.gt/dataset/encasba-2019,,2026-11-25,catalogo
+encasba-2024,encasba,ENCASBA 2024,2024,2024,,https://www.ine.gob.gt/encasba-2/,,2026-11-25,portal
+enpevi-2018,enpevi,ENPEVI 2018,2018,2018,,https://www.ine.gob.gt/enpevi/,,2026-11-25,catalogo
+ipc-base-2010,ipc,IPC base diciembre 2010=100,2011,2023,diciembre 2010=100,https://datos.ine.gob.gt/dataset/indicadores-ipc-base-diciembre-2010-100-0,,2026-11-25,catalogo
+ipc-base-2023,ipc,IPC base diciembre 2023=100,2024,2024,diciembre 2023=100,https://www.ine.gob.gt/indice-de-precios-al-consumidor/,https://www.ine.gob.gt/wp-content/uploads/2024/02/Aspectos-metodologicos-y-cambio-de-ano-base-IPC-2023-1.pdf,2026-11-25,metodologia
+ipc-base-2024,ipc,IPC base anual 2024=100,2025,2026,2024=100,https://www.ine.gob.gt/indice-de-precios-al-consumidor/,https://www.ine.gob.gt/wp-content/uploads/2025/02/Documento-metodologico-IPC-ano-base-2024.pdf,2026-11-25,metodologia
+cba-2017,cba,CBA fijada en octubre 2017 y su primera revisión,2017,2023,,https://www.ine.gob.gt/canasta-basica-alimentaria/,https://www.ine.gob.gt/ine/wp-content/uploads/2021/01/Primera-revision-de-la-Canasta-Basica-Alimentaria-CBA-fijada-en-octubre-2017-1.pdf,2026-11-25,portal
+cba-2024,cba,"CBA y CA urbana y rural, actualización metodológica 2024",2024,2026,,https://www.ine.gob.gt/canasta-basica-alimentaria/,https://www.ine.gob.gt/wp-content/uploads/2024/02/Actualizacion-Metodologica-CBA-1.pdf,2026-11-25,metodologia
+ipp-base-2024,ipp,IPP base 2024=100,2025,2026,2024=100,https://www.ine.gob.gt/ipp-2/,https://www.ine.gob.gt/wp-content/uploads/2025/06/METODOLOGIA-FINAL.pdf,2026-11-25,metodologia
+ipm-base-1986,ipm,IPM base 1986=100,2020,2023,1986=100,https://datos.ine.gob.gt/dataset/indice-de-precios-al-por-mayor,,2026-11-25,catalogo
+imc,ipmc,Índice de materiales de construcción (versión anterior al IPMC),2009,2016,,https://www.ine.gob.gt/indice-de-materiales-de-construccion/,,2026-11-25,catalogo
+ipmc-base-2018,ipmc,IPMC base diciembre 2018=100,2019,2026,diciembre 2018=100,https://www.ine.gob.gt/indice-de-materiales-de-construccion/,https://www.ine.gob.gt/ine/wp-content/uploads/2019/09/IPMC_metodologia.pdf,2026-11-25,portal
+icc-base-2025,icc,ICC base diciembre 2025=100,2026,2026,diciembre 2025=100,https://www.ine.gob.gt/indice-de-costos/,,2026-11-25,catalogo
+proyecciones-censo-2018,proyecciones-poblacion,Estimaciones y proyecciones con base en el Censo 2018 (actualización 2020),1950,2050,,https://www.ine.gob.gt/proyecciones/,https://www.ine.gob.gt/ine/wp-content/uploads/2020/08/02-Metodologia-Departamental-y-Municipal.pdf,2026-11-25,metodologia
+hba-2022,hba,Hoja de Balance de Alimentos 2022,2022,2022,,https://datos.ine.gob.gt/dataset/hoja-de-balance-de-alimentos-hba,,2026-11-25,catalogo
+hba-2024,hba,"Hoja de Balance de Alimentos, actualización 2024",2024,2024,,https://datos.ine.gob.gt/dataset/hoja-de-balance-de-alimentos-hba-actualizacion-2024,,2026-11-25,catalogo

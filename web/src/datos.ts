@@ -5,12 +5,22 @@ import { useEffect, useState } from "react";
 
 export type NivelTerritorial = "nacional" | "region" | "departamento" | "municipio" | "lugar_poblado" | "sin_determinar";
 
+export type TipoOperacion = "censo" | "encuesta" | "indice" | "registro_administrativo" | "estimacion";
+export type NivelProcesamiento = "microdatos" | "cuadros" | "indicadores" | "informes";
+
 export interface Publicacion {
   id: string;
   titulo: string;
-  tipo_publicacion: "encuesta" | "indice" | "censo" | "registro_administrativo" | "otro";
   direccion_ine: string | null;
-  tema: string;
+  /** Operación estadística de la que sale (id de `operaciones`). */
+  operacion: string;
+  /** Ediciones de la operación que cubre (ids de `ediciones`); vacío en registros administrativos. */
+  ediciones: string[];
+  nivel_procesamiento: NivelProcesamiento[];
+  nivel_determinado_por: "contenido" | "titulo" | "formato" | "supuesto" | null;
+  /** Derivados de la operación. */
+  tipo_operacion: TipoOperacion;
+  tema_portal: string | null;
   periodo_inicio: number;
   periodo_fin: number;
   periodicidad: string | null;
@@ -28,9 +38,73 @@ export interface Publicacion {
   notas: string | null;
 }
 
+/** Tema de «Estadísticas por tema» del portal del INE. */
+export interface Tema {
+  id: string;
+  nombre: string;
+  orden_portal: number;
+  url_portal: string;
+  fecha_consulta: string | null;
+}
+
+/** Operación estadística: el proceso con el que el INE produce información (censo, encuesta, índice…). */
+export interface Operacion {
+  id: string;
+  siglas: string | null;
+  nombre: string;
+  tipo_operacion: TipoOperacion;
+  descripcion: string;
+  /** "ine": cita textual de `url_descripcion`; "propia": resumen del equipo, no se presenta como cita. */
+  descripcion_origen: "ine" | "propia";
+  url_descripcion: string | null;
+  direccion_ine: string | null;
+  departamento_ine: string | null;
+  institucion_fuente: string | null;
+  periodicidad: string | null;
+  tema_portal: string | null;
+  menu_portal: string[];
+  url_portal: string;
+  url_metodologia: string | null;
+  fecha_consulta: string | null;
+}
+
+/** Edición de una operación: un levantamiento (censos, encuestas) o una base metodológica (índices). */
+export interface Edicion {
+  id: string;
+  operacion: string;
+  nombre: string;
+  anio_inicio: number;
+  anio_fin: number;
+  base_metodologica: string | null;
+  url_portal: string | null;
+  url_metodologia: string | null;
+  fecha_consulta: string | null;
+  como_se_determino: "portal" | "metodologia" | "catalogo" | null;
+}
+
+/** `operacion` usa insumos de `usa_insumo_de` (otra operación) o de `insumo_externo` (fuera del INE). */
+export interface Relacion {
+  id: string;
+  operacion: string;
+  edicion: string | null;
+  usa_insumo_de: string | null;
+  edicion_insumo: string | null;
+  insumo_externo: string[];
+  tipo_relacion: string;
+  descripcion: string;
+  url_respaldo: string;
+  pagina: string | null;
+  confianza: "confirmado" | "probable" | "hipótesis";
+  fecha_consulta: string | null;
+}
+
 export interface Catalogo {
   generado: string;
   publicaciones: Publicacion[];
+  temas: Tema[];
+  operaciones: Operacion[];
+  ediciones: Edicion[];
+  relaciones: Relacion[];
 }
 
 export interface Departamento {

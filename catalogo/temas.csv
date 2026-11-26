@@ -1,0 +1,23 @@
+id,nombre,orden_portal,url_portal,fecha_consulta
+poblacion,Población,1,https://www.ine.gob.gt/poblacion-menu/,2026-11-25
+vitales,"Vitales (nacimientos, defunciones, etc.)",2,https://www.ine.gob.gt/vitales/,2026-11-25
+violencia,Violencia,3,https://www.ine.gob.gt/violencia/,2026-11-25
+otros,Otros,4,https://www.ine.gob.gt/otros/,2026-11-25
+condiciones-de-vida,Condiciones de vida,5,https://www.ine.gob.gt/pobreza-menu/,2026-11-25
+transporte-y-servicios,Transporte y servicios,6,https://www.ine.gob.gt/estadisticas-de-transportes-y-servicios/,2026-11-25
+migracion,Migración,7,https://www.ine.gob.gt/estadisticas-de-migracion/,2026-11-25
+bibliotecas,Estadísticas de bibliotecas y centros de documentación,8,https://www.ine.gob.gt/bases-de-datos/bibliotecas-y-centros-de-documentacion/,2026-11-25
+agropecuario,Agropecuario,9,https://www.ine.gob.gt/granos_basicos/,2026-11-25
+canasta-basica,Canasta básica alimentaria y ampliada,10,https://www.ine.gob.gt/canasta-basica-alimentaria/,2026-11-25
+comercio-exterior,Comercio exterior,11,https://www.ine.gob.gt/estadisticas-de-comercio-exterior/,2026-11-25
+accidentes-de-transito,Estadísticas de accidentes de tránsito,12,https://www.ine.gob.gt/bases-de-datos/accidentes-de-transito/,2026-11-25
+empleo,Empleo,13,https://www.ine.gob.gt/encuesta-nacional-de-empleo-e-ingresos/,2026-11-25
+ipc,Índice de precios al consumidor,14,https://www.ine.gob.gt/indice-de-precios-al-consumidor/,2026-11-25
+gestion-municipal,Gestión municipal,15,https://www.ine.gob.gt/estadisticas-de-gestion-municipal/,2026-11-25
+perfiles-departamentales,Perfiles estadísticos departamentales,16,https://www.ine.gob.gt/perfil_estadistico/,2026-11-25
+educacion,Educación,17,https://www.ine.gob.gt/educacion/,2026-11-25
+otros-indices,Otros índices,18,https://www.ine.gob.gt/otros-indices/,2026-11-25
+medio-ambiente,Medio ambiente,19,https://www.ine.gob.gt/bases-de-datos/estadisticas-ambientales/,2026-11-25
+salud,Salud,20,https://www.ine.gob.gt/estadisticas-hospitalarias/,2026-11-25
+censo-recurso-humano,Censo Nacional del Recurso Humano,21,https://www.ine.gob.gt/censo-nacional-de-recurso-humano/,2026-11-25
+genero-y-pueblos,Género y pueblos,22,https://www.ine.gob.gt/genero-y-pueblos/,2026-11-25
