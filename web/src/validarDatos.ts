@@ -2,6 +2,16 @@
 type Objeto = Record<string, unknown>;
 const objeto = (v: unknown): v is Objeto => typeof v === "object" && v !== null && !Array.isArray(v);
 const texto = (v: unknown): v is string => typeof v === "string";
+const urlWeb = (v: unknown): boolean => {
+  if (!texto(v) || /[\s\u0000-\u001f\u007f\\]/.test(v) || !/^https?:\/\//i.test(v)) return false;
+  try {
+    const url = new URL(v);
+    return (url.protocol === "http:" || url.protocol === "https:") && !!url.hostname && !url.username && !url.password;
+  } catch {
+    return false;
+  }
+};
+const urlOpcional = (v: unknown) => v === null || urlWeb(v);
 const numero = (v: unknown): v is number => typeof v === "number" && Number.isFinite(v);
 const lista = (v: unknown, comprobar: (x: unknown) => boolean, minimo = 0): v is unknown[] =>
   Array.isArray(v) && v.length >= minimo && v.every(comprobar);
@@ -14,14 +24,14 @@ const intervalo = (v: unknown) => campos(v, { inicio: fecha, fin: fecha });
 const departamento = (v: unknown) => campos(v, { codigo: numero, nombre: texto });
 const punto = (v: unknown) => campos(v, { fecha, ipc: numero });
 const mesesValidacion = (v: unknown) => campos(v, { fecha, observado: numero, pronostico: numero, inferior_80: numero, superior_80: numero, inferior_95: numero, superior_95: numero });
-const publicacion = (v: unknown) => campos(v, { id: texto, titulo: texto, operacion: texto, ediciones: cadenas, tipo_operacion: texto, periodo_inicio: numero, periodo_fin: numero, nivel_territorial_minimo: texto, url_publicacion: texto, nivel_procesamiento: cadenas, formato: cadenas });
-const operacion = (v: unknown) => campos(v, { id: texto, nombre: texto, tipo_operacion: texto, descripcion: texto, descripcion_origen: texto, url_portal: texto, menu_portal: cadenas });
-const edicion = (v: unknown) => campos(v, { id: texto, operacion: texto, nombre: texto, anio_inicio: numero, anio_fin: numero });
-const relacion = (v: unknown) => campos(v, { id: texto, operacion: texto, insumo_externo: cadenas, tipo_relacion: texto, descripcion: texto, url_respaldo: texto, confianza: texto });
-const tema = (v: unknown) => campos(v, { id: texto, nombre: texto, orden_portal: numero, url_portal: texto });
+const publicacion = (v: unknown) => campos(v, { id: texto, titulo: texto, operacion: texto, ediciones: cadenas, tipo_operacion: texto, periodo_inicio: numero, periodo_fin: numero, nivel_territorial_minimo: texto, url_publicacion: urlWeb, url_descarga: urlOpcional, nivel_procesamiento: cadenas, formato: cadenas });
+const operacion = (v: unknown) => campos(v, { id: texto, nombre: texto, tipo_operacion: texto, descripcion: texto, descripcion_origen: texto, url_portal: urlWeb, url_descripcion: urlOpcional, url_metodologia: urlOpcional, menu_portal: cadenas });
+const edicion = (v: unknown) => campos(v, { id: texto, operacion: texto, nombre: texto, anio_inicio: numero, anio_fin: numero, url_portal: urlOpcional, url_metodologia: urlOpcional });
+const relacion = (v: unknown) => campos(v, { id: texto, operacion: texto, insumo_externo: cadenas, tipo_relacion: texto, descripcion: texto, url_respaldo: urlWeb, confianza: texto });
+const tema = (v: unknown) => campos(v, { id: texto, nombre: texto, orden_portal: numero, url_portal: urlWeb });
 const catalogo = (v: unknown) => campos(v, { generado: texto, publicaciones: (x) => lista(x, publicacion, 1), operaciones: (x) => lista(x, operacion, 1), ediciones: (x) => lista(x, edicion), relaciones: (x) => lista(x, relacion), temas: (x) => lista(x, tema) });
 const poblacion = (v: unknown) => {
-  if (!campos(v, { fuente: texto, url: texto, anios: numeros, pais: numeros, departamentos: objeto, municipios: objeto })) return false;
+  if (!campos(v, { fuente: texto, url: urlWeb, anios: numeros, pais: numeros, departamentos: objeto, municipios: objeto })) return false;
   const cantidad = (v.anios as unknown[]).length;
   const serie = (x: unknown) => numeros(x) && x.length === cantidad;
   return serie(v.pais) && Object.values(v.departamentos as Objeto).every(serie) && Object.values(v.municipios as Objeto).every(serie);

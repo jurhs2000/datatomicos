@@ -56,3 +56,24 @@ test("volver a la URL inicial representa una nueva navegación", async () => {
   assert.equal(regreso.parametros.get("depto"), "1");
   assert.equal(regreso.revision, 1);
 });
+
+
+test("rechaza enlaces no web o con credenciales en cada tipo de fuente", async () => {
+  const original = await leer("catalogo.json");
+  const casos = [
+    ["publicaciones", "url_publicacion"], ["publicaciones", "url_descarga"],
+    ["operaciones", "url_portal"], ["operaciones", "url_descripcion"],
+    ["operaciones", "url_metodologia"], ["ediciones", "url_portal"],
+    ["ediciones", "url_metodologia"], ["relaciones", "url_respaldo"], ["temas", "url_portal"],
+  ];
+  for (const [tabla, campo] of casos) {
+    for (const valor of ["javascript:alert(1)", "//example.com", "https://usuario:clave@example.com", "https://example.com/ mal", "https://example.com\\@evil.com"]) {
+      const catalogo = structuredClone(original);
+      catalogo[tabla][0][campo] = valor;
+      assert.equal(validarDatos("catalogo.json", catalogo), false, `${tabla}.${campo}: ${valor}`);
+    }
+  }
+  const poblacion = await leer("poblacion/proyecciones.json");
+  poblacion.url = "data:text/html,ejemplo";
+  assert.equal(validarDatos("poblacion/proyecciones.json", poblacion), false);
+});

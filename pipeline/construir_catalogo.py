@@ -24,6 +24,7 @@ import re
 import sys
 from datetime import date
 from pathlib import Path
+from urllib.parse import urlsplit
 
 from comun import CATALOGO, SALIDA, escribir_json
 
@@ -108,6 +109,19 @@ def valores_de(fila: dict[str, str], columna: str) -> list[str]:
     return [v.strip() for v in fila[columna].split("|") if v.strip()]
 
 
+def url_web_valida(valor: str) -> bool:
+    """Acepta solo URL web absolutas, sin espacios ni credenciales."""
+    if "\\" in valor or any(c.isspace() or ord(c) < 32 or ord(c) == 127 for c in valor):
+        return False
+    try:
+        url = urlsplit(valor)
+        # Acceder al puerto también detecta puertos mal formados.
+        _ = url.port
+        return url.scheme in {"http", "https"} and bool(url.hostname) and url.username is None and url.password is None
+    except ValueError:
+        return False
+
+
 def validar_tabla(tabla: Tabla, filas: list[dict[str, str]]) -> list[str]:
     """Columnas, obligatorias, ids únicos y vocabularios cerrados."""
     columnas = set(filas[0]) if filas else set()
@@ -126,6 +140,9 @@ def validar_tabla(tabla: Tabla, filas: list[dict[str, str]]) -> list[str]:
         vistos.add(fila["id"])
         if fila["id"] and not ID_VALIDO.match(fila["id"]):
             errores.append(f"{donde}: el id debe ir en minúsculas, con guiones y sin tildes")
+        for columna in tabla.columnas:
+            if columna.startswith("url_") and fila[columna] and not url_web_valida(fila[columna]):
+                errores.append(f"{donde}: «{columna}» debe ser una URL HTTP o HTTPS válida, sin credenciales")
         for columna, permitidos in tabla.valores.items():
             for valor in valores_de(fila, columna) if columna in tabla.listas else [fila[columna]] if fila[columna] else []:
                 if valor not in permitidos:
@@ -180,8 +197,6 @@ def validar_llaves(publicaciones, temas, operaciones, ediciones, relaciones) -> 
             de_la_operacion(donde, "edicion_insumo", r["edicion_insumo"], r["usa_insumo_de"])
         if r["edicion_insumo"] and not r["usa_insumo_de"]:
             errores.append(f"{donde}: «edicion_insumo» requiere «usa_insumo_de»")
-        if r["url_respaldo"] and not r["url_respaldo"].startswith("http"):
-            errores.append(f"{donde}: «url_respaldo» debe ser una URL")
     return errores
 
 

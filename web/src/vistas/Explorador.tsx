@@ -336,7 +336,10 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
         </fieldset>
       </aside>
 
-      <article className="ficha" aria-label="Resultados de la consulta" aria-live="polite" tabIndex={0}>
+      <article className="ficha" aria-label="Resultados de la consulta" tabIndex={0}>
+        <p className="solo-lector" role="status" aria-atomic="true">
+          {nombre}, {periodoTexto}: {total} {total === 1 ? "producto" : "productos"}.
+        </p>
         <h2 className="ficha-titulo">
           {nombre}, <span className="ine-num sin-corte">{periodoTexto}</span>
         </h2>

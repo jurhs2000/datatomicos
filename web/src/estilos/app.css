@@ -38,6 +38,30 @@ h3 {
   font-size: var(--ine-texto-md);
 }
 
+/* Enlace visible al recibir foco y texto solo para tecnologías de asistencia. */
+.saltar-contenido:not(:focus-visible),
+.solo-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.saltar-contenido:focus-visible {
+  position: absolute;
+  z-index: 10;
+  top: var(--ine-espacio-2);
+  left: var(--ine-espacio-2);
+  padding: var(--ine-espacio-2) var(--ine-espacio-3);
+  background: var(--ine-blanco);
+  color: var(--ine-azul-oscuro);
+  outline: 2px solid var(--ine-azul-oscuro);
+}
+
 /* --- Encabezado ---------------------------------------------------------- */
 
 .encabezado {

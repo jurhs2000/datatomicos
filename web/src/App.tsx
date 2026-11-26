@@ -14,6 +14,16 @@ export function App() {
 
   return (
     <div className="ine-base sitio">
+      <a
+        className="saltar-contenido"
+        href="#contenido-principal"
+        onClick={(evento) => {
+          evento.preventDefault();
+          document.getElementById("contenido-principal")?.focus();
+        }}
+      >
+        Saltar al contenido principal
+      </a>
       <header className="encabezado">
         <a className="marca" href={RUTAS.explorar.hash}>
           <span className="ine-tribarra" aria-hidden="true">
@@ -32,7 +42,7 @@ export function App() {
         </nav>
       </header>
 
-      <main className="contenido">
+      <main id="contenido-principal" className="contenido" tabIndex={-1}>
         <Suspense fallback={<p>Cargando…</p>}>
           <Vista key={`${ruta}-${revision}`} />
         </Suspense>
