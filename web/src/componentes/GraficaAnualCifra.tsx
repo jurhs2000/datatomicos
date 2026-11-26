@@ -17,6 +17,7 @@ interface Props {
 
 /** Cantidades anuales en columnas; porcentajes y tasas en líneas con escala explícita. */
 export function GraficaAnualCifra({ kpi, anios, serie, anioElegido, lugar, desde, hasta }: Props) {
+  const haySolapamiento = desde <= anios.at(-1)! && hasta >= anios[0];
   const dibujar = useCallback((ancho: number) => {
     const primero = anios[0];
     const ultimo = anios.at(-1)!;
@@ -61,7 +62,7 @@ export function GraficaAnualCifra({ kpi, anios, serie, anioElegido, lugar, desde
   return (
     <figure className="cifra-grafica-anual">
       <Grafica dibujar={dibujar} etiqueta={`${kpi.tipo === "conteo" ? "Columnas" : "Línea"} de ${kpi.nombre}, ${lugar}, en ${kpi.unidad}; ${anios[0]} a ${anios.at(-1)}. Periodo seleccionado ${textoPeriodo(desde, hasta)}. Año mostrado ${anioElegido}.`} />
-      <figcaption>El sombreado marca {textoPeriodo(desde, hasta)}. Año destacado: {anioElegido}.</figcaption>
+      <figcaption>{haySolapamiento ? `El sombreado marca ${textoPeriodo(desde, hasta)}.` : `El periodo seleccionado ${textoPeriodo(desde, hasta)} queda fuera de la cobertura mostrada.`} Año destacado: {anioElegido}.</figcaption>
     </figure>
   );
 }

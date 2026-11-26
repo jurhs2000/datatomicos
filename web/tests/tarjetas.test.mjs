@@ -124,6 +124,8 @@ test("las tarjetas renderizan KPI, procedencia, cobertura y niveles con el mismo
       const fuera = renderizar(establecimientos, municipio, 2019, 2021);
       assert.match(fuera, /Este producto cubre 2022–2025/);
       assert.match(fuera, /<strong>332<\/strong>/);
+      assert.match(fuera, /El periodo seleccionado 2019–2021 queda fuera de la cobertura mostrada\. Año destacado: 2022\./);
+      assert.doesNotMatch(fuera, /El sombreado marca/);
       const nac = renderizar(nacimientos, municipio, 2019, 2021);
       const fila = nacimientos.filas.find((f) => f.kpi === "registrados" && f.nivel === "municipio" && f.territorio === 805 && f.anio === 2021);
       assert.ok(nac.includes(`<strong>${fila.valor.toLocaleString("es-GT")}</strong>`));

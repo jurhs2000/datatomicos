@@ -13,4 +13,4 @@ Cada archivo documenta una decisión de diseño: el contexto, lo que se decidió
 | [0007](0007-limites-territoriales.md) | Límites territoriales de HDX con los códigos del INE |
 | [0008](0008-operacion-edicion-y-publicacion.md) | El catálogo se organiza por operación, edición y publicación |
 | [0009](0009-graficas-y-notas-en-cifras.md) | Gráficas con escala y notas junto a las cifras |
-| [0010](0010-acceso-a-cifras-y-productos.md) | Acceso a cifras y productos dentro de una misma ficha (en evaluación) |
+| [0010](0010-acceso-a-cifras-y-productos.md) | Acceso a cifras y productos dentro de una misma ficha |

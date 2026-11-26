@@ -154,6 +154,14 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
       // En móvil se desplaza la página; en escritorio, la propia ficha.
       if (!scrollPropio) window.scrollTo({ top: posicion.pagina, behavior: "auto" });
     }
+    // La página también pudo desplazarse: el scroll interno por sí solo no revela la ficha.
+    const acceso = accesoFicha.current?.getBoundingClientRect();
+    const destino = tarjeta?.getBoundingClientRect();
+    // Al llegar al final del scroll interno, deja espacio para leer el comienzo de la tarjeta.
+    const destinoRecortado = destino && destino.top + Math.min(destino.height, 240) > window.innerHeight;
+    if (scrollPropio && acceso && (acceso.top < 0 || acceso.bottom > window.innerHeight || destinoRecortado)) {
+      window.scrollBy({ top: acceso.top, behavior: "auto" });
+    }
   }, [estadoFicha.revision, estadoFicha.vista, estadoFicha.destino]);
   const indice = useMemo(() => indexar(catalogo), [catalogo]);
   const { parametros } = useUbicacion();
@@ -456,8 +464,7 @@ function Buscador({ catalogo, departamentos, poblacion, errorPoblacion }: PropsB
           {productoFueraConsulta && (
             <section aria-label="Producto de origen fuera de la consulta">
               <h4 className="grupo-titulo">Producto de origen de las cifras</h4>
-              <p className="nota" role="status">Este producto no coincide con el periodo o los filtros activos. Se muestra como origen de las cifras; la consulta y su conteo se conservan.</p>
-              <Lista productos={[productoFueraConsulta]} depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
+              <Lista productos={[productoFueraConsulta]} fueraDeConsulta depto={deptoParaEnlaces} indice={indice} {...controlesCifras} />
             </section>
           )}
           {productoFueraConsulta && <h4 className="grupo-titulo">Productos que coinciden con la consulta</h4>}
@@ -531,9 +538,10 @@ interface PropsLista {
   productosConCifras: Set<string>;
   abrirCifras: (id: string) => void;
   registrarProducto: (id: string, nodo: HTMLLIElement | null) => void;
+  fueraDeConsulta?: boolean;
 }
 
-function Lista({ productos, depto, indice, productosConCifras, abrirCifras, registrarProducto }: PropsLista) {
+function Lista({ productos, depto, indice, productosConCifras, abrirCifras, registrarProducto, fueraDeConsulta = false }: PropsLista) {
   if (productos.length === 0) return <p className="nota">Ningún producto coincide con los filtros.</p>;
   return (
     <ul className="lista-productos">
@@ -546,6 +554,7 @@ function Lista({ productos, depto, indice, productosConCifras, abrirCifras, regi
                 {p.titulo}
               </a>
             </h5>
+            {fueraDeConsulta && <p className="nota" role="status">Este producto no coincide con el periodo o los filtros activos. Se muestra como origen de las cifras; la consulta y su conteo se conservan.</p>}
             {p.direccion_ine && <p className="producto-meta">{p.direccion_ine}</p>}
             <dl className="producto-datos">
               <dt>Origen</dt>
@@ -589,7 +598,7 @@ function Lista({ productos, depto, indice, productosConCifras, abrirCifras, regi
             {p.como_se_determino === "supuesto" && (
               <p className="aviso-supuesto">El periodo o el nivel territorial se infirieron y falta verificarlos.</p>
             )}
-            {p.datos === "poblacion" && <p className="nota">Sus cifras están arriba, en «En cifras».</p>}
+            {p.datos === "poblacion" && <p className="nota">Consulta sus cifras en la vista «En cifras».</p>}
             {productosConCifras.has(p.id) && (
               <button type="button" className="boton producto-ver-cifras" aria-label={`Ver cifras de ${p.titulo}`} aria-controls={`cifras-${encodeURIComponent(p.id)}`} onClick={() => abrirCifras(p.id)}>
                 Ver cifras
