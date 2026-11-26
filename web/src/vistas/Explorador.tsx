@@ -5,6 +5,7 @@ import type { Origen } from "../componentes/TarjetaCifra";
 import { TarjetaPoblacion } from "../componentes/TarjetaPoblacion";
 import { TarjetaPrecios } from "../componentes/TarjetaPrecios";
 import { enlace, reemplazarParametros, useUbicacion } from "../navegacion";
+import { useMunicipios } from "../territorio";
 import {
   NOMBRE_NIVEL,
   llegaADepartamento,
@@ -14,6 +15,7 @@ import {
   type Catalogo,
   type Departamento,
   type Lugar,
+  type NivelTerritorial,
   type Poblacion,
   type Publicacion,
   type TipoOperacion,
@@ -101,6 +103,16 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
     const codigo = entero(parametros, "depto");
     return departamentos.some((d) => d.codigo === codigo) ? codigo : null;
   });
+  const [municipioElegido, setMunicipio] = useState<number | null>(() => entero(parametros, "muni"));
+  const municipios = useMunicipios(departamento);
+  // Al cambiar de departamento se borra el municipio elegido.
+  const elegirDepartamento = (codigo: number | null) => {
+    setDepartamento(codigo);
+    setMunicipio(null);
+  };
+  // Un municipio de la URL que no es de este departamento se ignora.
+  const municipio = municipios?.find((m) => m.codigo === municipioElegido) ?? null;
+
   const [tema, setTema] = useState<string | null>(() => {
     const t = parametros.get("tema");
     return t === SIN_TEMA || (t && indice.temas.has(t)) ? t : null;
@@ -118,18 +130,22 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
   useEffect(() => {
     reemplazarParametros({
       depto: departamento,
+      // Mientras carga la lista de municipios se conserva el de la URL.
+      muni: municipios ? (municipio?.codigo ?? null) : municipioElegido,
       desde: periodo.desde,
       hasta: periodo.hasta,
       tema,
       tipo: operacion ? null : tipo,
       op: operacion,
     });
-  }, [departamento, periodo, tema, tipo, operacion]);
+  }, [departamento, municipios, municipio, municipioElegido, periodo, tema, tipo, operacion]);
 
   const lugar = useMemo<Lugar>(() => {
     const d = departamentos.find((x) => x.codigo === departamento);
-    return d ? { nivel: "departamento", codigo: d.codigo, nombre: d.nombre } : { nivel: "pais" };
-  }, [departamentos, departamento]);
+    if (!d) return { nivel: "pais" };
+    if (municipio) return { nivel: "municipio", codigo: municipio.codigo, nombre: municipio.nombre, departamento: d };
+    return { nivel: "departamento", codigo: d.codigo, nombre: d.nombre };
+  }, [departamentos, departamento, municipio]);
 
   // Filtros en cascada. Los conteos de cada lista usan los demás filtros, no el propio.
   const enPeriodo = useMemo(
@@ -159,19 +175,29 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
   const ordenados = [...filtrados].sort(
     (a, b) => Number(!!b.datos) - Number(!!a.datos) || b.periodo_fin - a.periodo_fin,
   );
+  const esNivel = (...niveles: NivelTerritorial[]) => (p: Publicacion) => niveles.includes(p.nivel_territorial_minimo);
   const grupos =
     lugar.nivel === "pais"
-      ? { principales: ordenados, agregados: [], porConfirmar: [] }
-      : {
-          principales: ordenados.filter((p) => llegaADepartamento(p.nivel_territorial_minimo)),
-          agregados: ordenados.filter((p) => ["nacional", "region"].includes(p.nivel_territorial_minimo)),
-          porConfirmar: ordenados.filter((p) => p.nivel_territorial_minimo === "sin_determinar"),
-        };
+      ? { principales: ordenados, departamentales: [], agregados: [], porConfirmar: [] }
+      : lugar.nivel === "departamento"
+        ? {
+            principales: ordenados.filter((p) => llegaADepartamento(p.nivel_territorial_minimo)),
+            departamentales: [],
+            agregados: ordenados.filter(esNivel("nacional", "region")),
+            porConfirmar: ordenados.filter(esNivel("sin_determinar")),
+          }
+        : {
+            principales: ordenados.filter(esNivel("municipio", "lugar_poblado")),
+            departamentales: ordenados.filter(esNivel("departamento")),
+            agregados: ordenados.filter(esNivel("nacional", "region")),
+            porConfirmar: ordenados.filter(esNivel("sin_determinar")),
+          };
+  const nombreDepartamento = lugar.nivel === "municipio" ? lugar.departamento.nombre : nombreLugar(lugar);
 
   const total = filtrados.length;
   const nombre = nombreLugar(lugar);
   const periodoTexto = textoPeriodo(periodo.desde, periodo.hasta);
-  const deptoParaEnlaces = lugar.nivel === "pais" ? null : lugar.codigo;
+  const deptoParaEnlaces = departamento;
   const hayFiltros = tema !== null || tipo !== null;
 
   // Origen de las tarjetas: el producto del catálogo que las alimenta.
@@ -207,7 +233,7 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
           <select
             aria-label="Departamento"
             value={departamento ?? ""}
-            onChange={(e) => setDepartamento(e.target.value ? Number(e.target.value) : null)}
+            onChange={(e) => elegirDepartamento(e.target.value ? Number(e.target.value) : null)}
           >
             <option value="">Todo el país</option>
             {departamentos.map((d) => (
@@ -216,7 +242,37 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
               </option>
             ))}
           </select>
-          <Mapa seleccionado={departamento} onSeleccion={setDepartamento} />
+          <Mapa
+            capa="departamentos"
+            seleccionado={departamento}
+            onSeleccion={elegirDepartamento}
+            etiqueta="Mapa de departamentos de Guatemala"
+          />
+          {departamento !== null && (
+            <div className="lugar-municipio">
+              <select
+                aria-label="Municipio"
+                value={municipio?.codigo ?? ""}
+                onChange={(e) => setMunicipio(e.target.value ? Number(e.target.value) : null)}
+                disabled={!municipios}
+              >
+                <option value="">{municipios ? "Todo el departamento" : "Cargando municipios…"}</option>
+                {municipios?.map((m) => (
+                  <option key={m.codigo} value={m.codigo}>
+                    {m.nombre}
+                  </option>
+                ))}
+              </select>
+              <Mapa
+                key={departamento}
+                capa="municipios"
+                departamento={departamento}
+                seleccionado={municipio?.codigo ?? null}
+                onSeleccion={setMunicipio}
+                etiqueta={`Mapa de los municipios de ${nombreDepartamento}`}
+              />
+            </div>
+          )}
         </fieldset>
         <fieldset>
           <legend>Tema</legend>
@@ -270,7 +326,7 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
 
       <article className="ficha" aria-live="polite">
         <h2 className="ficha-titulo">
-          {nombre}, <span className="ine-num">{periodoTexto}</span>
+          {nombre}, <span className="ine-num sin-corte">{periodoTexto}</span>
         </h2>
 
         <section className="ficha-seccion">
@@ -289,6 +345,7 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
               <TarjetaPrecios
                 departamento={lugar.nivel === "municipio" ? lugar.departamento.codigo : lugar.codigo}
                 nombre={lugar.nivel === "municipio" ? lugar.departamento.nombre : lugar.nombre}
+                municipio={lugar.nivel === "municipio" ? lugar.nombre : undefined}
                 origen={origenPrecios}
               />
             )}
@@ -319,24 +376,38 @@ function Buscador({ catalogo, departamentos, poblacion }: PropsBuscador) {
           )}
           {lugar.nivel !== "pais" && (
             <>
-              <h4 className="grupo-titulo">Con cifras de {nombre}</h4>
+              <h4 className="grupo-titulo">Con cifras de {lugar.nombre}</h4>
               <p className="nota">
-                {grupos.principales.length} publican cifras a nivel de departamento o más detallado.
+                {grupos.principales.length} publican cifras a nivel de{" "}
+                {lugar.nivel === "municipio" ? "municipio" : "departamento"} o más detallado.
               </p>
             </>
           )}
           <Lista productos={grupos.principales} depto={deptoParaEnlaces} indice={indice} />
+          {grupos.departamentales.length > 0 && (
+            <>
+              <h4 className="grupo-titulo">Con cifras solo de {nombreDepartamento}</h4>
+              <p className="nota">Publican cifras del departamento, pero no de cada municipio.</p>
+              <Lista productos={grupos.departamentales} depto={deptoParaEnlaces} indice={indice} />
+            </>
+          )}
           {grupos.agregados.length > 0 && (
             <>
               <h4 className="grupo-titulo">Con cobertura nacional o regional</h4>
-              <p className="nota">Incluyen a {nombre}, pero no publican cifras propias del departamento.</p>
+              <p className="nota">
+                Incluyen a {lugar.nivel === "pais" ? "todo el país" : lugar.nombre}, pero no publican cifras propias
+                del {lugar.nivel === "municipio" ? "municipio" : "departamento"}.
+              </p>
               <Lista productos={grupos.agregados} depto={deptoParaEnlaces} indice={indice} />
             </>
           )}
           {grupos.porConfirmar.length > 0 && (
             <>
               <h4 className="grupo-titulo">Nivel territorial por confirmar</h4>
-              <p className="nota">Todavía no se revisó si estos productos traen cifras por departamento.</p>
+              <p className="nota">
+                Todavía no se revisó si estos productos traen cifras por{" "}
+                {lugar.nivel === "municipio" ? "municipio" : "departamento"}.
+              </p>
               <Lista productos={grupos.porConfirmar} depto={deptoParaEnlaces} indice={indice} />
             </>
           )}

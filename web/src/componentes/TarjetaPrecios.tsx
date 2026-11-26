@@ -8,7 +8,15 @@ const HORIZONTE = 12;
 const SIN_EL_NINO = new Set<number>();
 
 /** IPC nacional proyectado a 12 meses y ajustado al nivel de precios de un departamento (estimación del equipo). */
-export function TarjetaPrecios({ departamento, nombre, origen }: { departamento: number; nombre: string; origen?: Origen }) {
+interface Props {
+  departamento: number;
+  nombre: string;
+  /** Si hay un municipio elegido: la tarjeta aclara que la cifra es del departamento. */
+  municipio?: string;
+  origen?: Origen;
+}
+
+export function TarjetaPrecios({ departamento, nombre, municipio, origen }: Props) {
   const pronostico = useJson<Pronostico>("ipc/pronostico.json");
   const coeficientes = useJson<Coeficientes>("ipc/coeficientes.json");
 
@@ -31,7 +39,10 @@ export function TarjetaPrecios({ departamento, nombre, origen }: { departamento:
       unidad="IPC proyectado"
       anio={mes}
       estimacion
-      nota={`IPC nacional ajustado al nivel de precios de ${nombre} · estimación del equipo. Sin El Niño.`}
+      nota={
+        `IPC nacional ajustado al nivel de precios de ${nombre} · estimación del equipo. Sin El Niño.` +
+        (municipio ? ` Es la cifra del departamento: el ajuste no llega a ${municipio}.` : "")
+      }
       origen={origen ?? { texto: "IPC del INE, base 2024=100 · proyección y ajuste del equipo", url: "https://www.ine.gob.gt/indice-de-precios-al-consumidor/" }}
       accion={
         <a className="boton" href={enlace("calculadora", { depto: departamento })}>

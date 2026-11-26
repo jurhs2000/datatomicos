@@ -300,6 +300,31 @@ h3 {
   border: 1px solid var(--ine-borde);
 }
 
+.mapa-lienzo-municipios {
+  height: 18rem;
+}
+
+/* En pantallas angostas, los dos mapas apilados no deben ocupar toda la pantalla. */
+@media (max-width: 52rem) {
+  .mapa-lienzo {
+    height: 16rem;
+  }
+
+  .mapa-lienzo-municipios {
+    height: 14rem;
+  }
+}
+
+.lugar-municipio {
+  margin-top: var(--ine-espacio-3);
+  padding-top: var(--ine-espacio-3);
+  border-top: 1px dashed var(--ine-borde);
+}
+
+.mapa .maplibregl-ctrl-attrib {
+  font-size: var(--ine-texto-xs);
+}
+
 .mapa-aviso {
   position: absolute;
   inset: auto var(--ine-espacio-2) var(--ine-espacio-2);
@@ -709,4 +734,8 @@ h3 {
   margin: var(--ine-espacio-2) 0 0;
   font-size: var(--ine-texto-sm);
   color: var(--ine-naranja-oscuro);
+}
+
+.sin-corte {
+  white-space: nowrap;
 }
