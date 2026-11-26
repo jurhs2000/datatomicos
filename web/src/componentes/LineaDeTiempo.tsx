@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 interface Props {
   minimo: number;
   maximo: number;
@@ -8,6 +10,7 @@ interface Props {
 
 /** Selector de rango de años con dos manijas. Mantiene desde ≤ hasta. */
 export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props) {
+  const [ultimaManija, setUltimaManija] = useState<"desde" | "hasta">("hasta");
   const amplitud = maximo - minimo;
   const inicio = amplitud ? ((desde - minimo) / amplitud) * 100 : 0;
   const fin = amplitud ? ((hasta - minimo) / amplitud) * 100 : 100;
@@ -33,8 +36,11 @@ export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props)
           max={maximo}
           aria-valuemax={hasta}
           value={desde}
-          style={{ zIndex: desde === maximo ? 3 : 1 }}
-          onChange={(e) => onCambio(Math.min(Number(e.target.value), hasta), hasta)}
+          style={{ zIndex: desde === hasta && desde !== minimo && (desde === maximo || ultimaManija === "desde") ? 3 : 1 }}
+          onChange={(e) => {
+            setUltimaManija("desde");
+            onCambio(Math.min(Number(e.target.value), hasta), hasta);
+          }}
         />
         <input
           type="range"
@@ -43,7 +49,11 @@ export function LineaDeTiempo({ minimo, maximo, desde, hasta, onCambio }: Props)
           max={maximo}
           aria-valuemin={desde}
           value={hasta}
-          onChange={(e) => onCambio(desde, Math.max(Number(e.target.value), desde))}
+          style={{ zIndex: 2 }}
+          onChange={(e) => {
+            setUltimaManija("hasta");
+            onCambio(desde, Math.max(Number(e.target.value), desde));
+          }}
         />
       </div>
       {hayFuturo && <p className="linea-tiempo-leyenda"><span aria-hidden="true" /> Años futuros: proyecciones</p>}
